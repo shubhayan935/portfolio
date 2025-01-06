@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
-import { Github, Mail, Linkedin, Twitter, ExternalLink, ChevronDown } from 'lucide-react'
+import { Github, Mail, Linkedin, Twitter, ExternalLink, ChevronDown, Sun, Moon } from 'lucide-react'
 
 // Animation variants
 const fadeIn: Variants = {
@@ -144,12 +144,46 @@ const projects = [
 ]
 
 // Components
+// Theme toggle component
+function ThemeToggle() {
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
+
+  useEffect(() => {
+    const root = window.document.documentElement
+    if (theme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      aria-label="Toggle theme"
+    >
+      {theme === 'light' ? (
+        <Moon className="h-5 w-5" />
+      ) : (
+        <Sun className="h-5 w-5" />
+      )}
+    </button>
+  )
+}
+
 function Navbar() {
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex max-w-2xl items-center justify-between px-0 py-4">
         <h1 className="text-3xl font-semibold">Shubhayan Srivastava</h1>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {socialLinks.map((link) => (
             <button key={link.label} className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <a href={link.href} target="_blank" rel="noopener noreferrer">
@@ -388,26 +422,6 @@ function Projects() {
   )
 }
 
-// function Resume() {
-//   return (
-//     <motion.section
-//       className="space-y-12"
-//       variants={slideIn}
-//       initial="hidden"
-//       animate="visible"
-//     >
-//       <h2 className="text-2xl font-medium">Resume</h2>
-//       <div className="flex justify-center">
-//         <button className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90">
-//           <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
-//             <FileText className="size-5" />
-//             Download Resume (PDF)
-//           </a>
-//         </button>
-//       </div>
-//     </motion.section>
-//   )
-// }
 
 // Main App component
 export default function App() {
@@ -425,9 +439,6 @@ export default function App() {
         <section id="projects">
           <Projects />
         </section>
-        {/* <section id="resume">
-          <Resume />
-        </section> */}
       </main>
     </div>
   )
