@@ -186,7 +186,7 @@ function Bio() {
       </p>
 
       <p>
-          Among others, I've developed AI solutions for governments in reducing air pollution,
+          Among others, I've developed AI solutions for the Indian government in reducing air pollution,
           currently used across 15+ cities to help policymakers make data-driven decisions on air pollution, and 
           AI-powered debugging agents for enterprise engineering teams, revolutionizing bug detection 
           workflows with automated root-cause analysis.
