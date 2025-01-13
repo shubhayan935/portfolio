@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { Github, Mail, Linkedin, Twitter, ExternalLink, ChevronDown, Sun, Moon } from 'lucide-react'
+import { Analytics } from '@vercel/analytics/react';
 
 // Animation variants
 const fadeIn: Variants = {
@@ -440,6 +441,7 @@ export default function App() {
           <Projects />
         </section>
       </main>
+      <Analytics />
     </div>
   )
 }
