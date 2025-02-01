@@ -182,7 +182,7 @@ function Navbar() {
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex max-w-2xl items-center justify-between px-0 py-4">
-        <h1 className="text-3xl font-semibold">Shubhayan Srivastava</h1>
+        <h1 className="text-4xl font-semibold">Shubhayan Srivastava</h1>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           {socialLinks.map((link) => (
@@ -202,7 +202,7 @@ function Navbar() {
 function Bio() {
   return (
     <motion.div 
-      className="space-y-8 pb-16 pt-8 text-left"
+      className="space-y-8 pb-16 pt-8 text-left font-instrument-sans"
       variants={fadeIn}
       initial="hidden"
       animate="visible"
@@ -282,7 +282,7 @@ function WorkExperienceItem({ item }: { item: typeof workExperience[0] }) {
   return (
     <motion.div
       variants={slideIn}
-      className="group bg-card border border-border rounded-lg p-3 shadow-sm transition-transform hover:scale-[1.02]"
+      className="group bg-card border border-border rounded-lg p-3 shadow-sm transition-transform hover:scale-[1.02]  font-instrument-sans"
     >
       <button
         className="relative flex w-full items-center justify-between gap-4 text-left focus:outline-none"
@@ -350,12 +350,12 @@ function WorkExperienceItem({ item }: { item: typeof workExperience[0] }) {
 function WorkExperience() {
   return (
     <motion.div
-      className="space-y-8 pb-16"
+      className="space-y-8 pb-16 "
       variants={fadeIn}
       initial="hidden"
       animate="visible"
     >
-      <motion.h2 className="text-2xl font-semibold" variants={slideIn}>
+      <motion.h2 className="text-3xl font-semibold" variants={slideIn}>
         Work Experience
       </motion.h2>
       
@@ -377,13 +377,13 @@ function Projects() {
       animate="visible"
     >
       <motion.h2
-        className="text-2xl font-semibold"
+        className="text-3xl font-semibold"
         variants={slideIn}
       >
         Projects
       </motion.h2>
       <motion.div 
-        className="grid gap-4 md:grid-cols-2"
+        className="grid gap-4 md:grid-cols-2 font-instrument-sans"
         variants={staggerChildren}
       >
         {projects.map((project) => (
@@ -427,19 +427,19 @@ function Projects() {
 // Main App component
 export default function App() {
   return (
-    <div className="min-h-screen bg-background font-sans antialiased">
+    <div className="min-h-screen bg-background antialiased">
       <div className="fixed inset-0 -z-10 bg-[linear-gradient(45deg,transparent_25%,rgba(68,68,68,.05)_25%,rgba(68,68,68,.05)_50%,transparent_50%,transparent_75%,rgba(68,68,68,.05)_75%)] bg-[length:24px_24px]" />
       <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-24 md:px-0">
-        <section id="about">
+        <motion.section id="about" variants={fadeIn} initial="hidden" animate="visible">
           <Bio />
-        </section>
-        <section id="work">
+        </motion.section>
+        <motion.section id="work" variants={fadeIn} initial="hidden" animate="visible">
           <WorkExperience />
-        </section>
-        <section id="projects">
+        </motion.section>
+        <motion.section id="projects" variants={fadeIn} initial="hidden" animate="visible">
           <Projects />
-        </section>
+        </motion.section>
       </main>
       <Analytics />
     </div>
