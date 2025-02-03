@@ -282,7 +282,7 @@ function WorkExperienceItem({ item }: { item: typeof workExperience[0] }) {
   return (
     <motion.div
       variants={slideIn}
-      className="group bg-card border border-border rounded-lg p-3 shadow-sm transition-transform hover:scale-[1.02]  font-instrument-sans"
+      className="group bg-card-texture border border-border rounded-lg p-3 shadow-sm transition-transform hover:scale-[1.02]  font-instrument-sans"
     >
       <button
         className="relative flex w-full items-center justify-between gap-4 text-left focus:outline-none"
@@ -392,7 +392,7 @@ function Projects() {
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:bg-accent"
+              className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card-texture transition-colors hover:bg-accent"
             >
               <div className="aspect-[16/9] overflow-hidden">
                 <img
