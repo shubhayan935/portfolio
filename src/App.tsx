@@ -116,6 +116,13 @@ const workExperience = [
 
 const projects = [
   {
+    name: "Intervene",
+    description: "OS level AI agent that takes over and completes tasks for you. Tell Intervene what to do, and it will do it for you.",
+    url: "https://intervene-smoky.vercel.app",
+    image: "/intervene.png",
+    achievement: "8VC Hackathon Winner"
+  },
+  {
     name: "IdeaVine",
     description: "Multi-modal mindmapping tool designed to help you think freely. Let AI think with you, not for you.",
     url: "https://useideavine.com",
@@ -134,13 +141,14 @@ const projects = [
     description: "AI data scientist that connects directly to your databases and derives insights and visualizations through simple natural language prompts.",
     url: "https://github.com/shubhayan935/AIlytics",
     image: "/ailytics.png",
-    achievement: "Featured"
+    // achievement: "Featured"
   },
   {
     name: "Tone",
     description: "Wear your wisdom. Tone captures your lived experiences, your conversations, your ideas, your  to-dos, automatically.",
     url: "https://tone.computer",
-    image: "/tone.png"
+    image: "/tone.png",
+    achievement: "384K+ views on X"
   },
 ]
 
