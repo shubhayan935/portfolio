@@ -130,6 +130,13 @@ const projects = [
     achievement: "8VC Hackathon Winner"
   },
   {
+    name: "Glance",
+    description: "An automated documentation platform that keeps teams effortlessly aligned by eliminating inefficiencies in communication and knowledge-sharing.",
+    url: "https://glance.team",
+    image: "/glance.png",
+    // achievement: "8VC Hackathon Winner"
+  },
+  {
     name: "IdeaVine",
     description: "Multi-modal mindmapping tool designed to help you think freely. Let AI think with you, not for you.",
     url: "https://useideavine.com",
