@@ -1,3 +1,2 @@
-node_modules/
-.DS_Dtore
-dist/
+node_modules
+.next
