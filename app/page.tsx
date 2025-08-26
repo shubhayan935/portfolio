@@ -37,7 +37,7 @@ export default function Home() {
 
         {/* Main Content */}
         <motion.main 
-          className="pt-32 max-w-4xl mx-auto px-32"
+          className="pt-32 max-w-4xl mx-auto px-4 md:px-32"
           variants={staggerContainer}
           initial="initial"
           animate="animate"

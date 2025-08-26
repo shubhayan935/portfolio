@@ -18,7 +18,7 @@ export default function Header() {
 
   return (
     <motion.header 
-      className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 ease-out px-20 w-[800px] ${
+      className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 ease-out px-20 md:w-[800px] ${
         isScrolled
           ? 'py-0'
           : 'py-4'
