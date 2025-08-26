@@ -42,6 +42,9 @@ const instrumentSans = Instrument_Sans({
 export const metadata: Metadata = {
   title: "Shubhayan Srivastava",
   description: "Shubhayan Srivastava's personal website",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
