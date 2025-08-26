@@ -19,7 +19,7 @@ const experienceData = [
     position: "Software Engineer Intern",
     period: "Oct 2024 - Dec 2024",
     logo: "/recei_icon.jpeg",
-    description: "Working on cutting-edge AI and software engineering projects, contributing to innovative solutions in the technology space with a focus on scalable systems and user experience."
+    description: "First engineering hire. Revolutionizing customer retention and relationships through dynamic digital receipts. Built a scalable business dashboard with AI-driven analytics and receipt customizations. Optimized APIs for receipt customization in Nest.js, reducing operational costs by 70% annually and contributing to a $150,000 increase in projected revenue through improved customer retention."
   },
   {
     id: "thoughtminds",
@@ -27,7 +27,7 @@ const experienceData = [
     position: "Software Engineer Intern",
     period: "May 2024 - Aug 2024",
     logo: "/thoughtminds_icon.png",
-    description: "Developed AI-powered debugging agents for enterprise engineering teams, revolutionizing bug detection workflows with automated root-cause analysis and improving development efficiency."
+    description: "Developed AI-powered debugging agents for for the company’s AI copilot product, revolutionizing bug detection workflows with automated root-cause analysis and improving development efficiency."
   },
   {
     id: "usc-isi",
@@ -35,7 +35,7 @@ const experienceData = [
     position: "Undergraduate Research Assistant",
     period: "Jan 2024 - May 2024",
     logo: "/usc_isi_icon.jpg",
-    description: "Conducted research in artificial intelligence and machine learning, contributing to cutting-edge projects in computer science and developing innovative solutions for complex technical challenges."
+    description: "Predicting stock prices from social media posts. Built and fine-tuned NLP models using VADER and BERT & restructured algorithm using AutoTriggER to improve sentiment analysis & entity recognition accuracy by 27%."
   },
   {
     id: "formula-e",
@@ -51,7 +51,7 @@ const experienceData = [
     position: "Data Science Intern",
     period: "Dec 2021 - Mar 2022",
     logo: "/thoughtworks_icon.jpg",
-    description: "Worked on data science projects, analyzing large datasets and developing machine learning models to derive actionable business insights and support data-driven decision making."
+    description: "Worked on the AI4Bharat initiative’s Speech-to-Text project for over 47 Indian languages. Built a benchmarking dataset for ASR models from the ground up. Collected multilingual speech data by web-scraping open-source audio-visual content. Preprocessed and filtered data using SNR metrics and audio chunking. Developed and tested ASR models, leveraging Python packages like subprocess, IPython, numpy, and audio-processing libraries like wave, audioop, soundfile, and webrtcvad."
   }
 ]
 
