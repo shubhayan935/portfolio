@@ -27,7 +27,7 @@ export default function Banner() {
         </p>
 
         <p className="leading-relaxed">
-          I'm extremely grateful to say that things I've built have been used by and impacted 3M+ people.
+          I'm extremely grateful to say that the things I've built have been used by and impacted 3M+ people.
           In high school, I developed AI solutions for the Indian government in reducing air pollution,
           currently used across 15+ cities to help policymakers make data-driven decisions on air pollution.
         </p>
