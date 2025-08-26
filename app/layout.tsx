@@ -43,7 +43,11 @@ export const metadata: Metadata = {
   title: "Shubhayan Srivastava",
   description: "Shubhayan Srivastava's personal website",
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+    ],
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
