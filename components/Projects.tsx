@@ -80,7 +80,7 @@ export default function Projects() {
                 alt={project.title} 
                 width={600} 
                 height={400} 
-                className="w-full h-48 object-cover"
+                className="w-full h-40 object-cover"
               />
 
               {/* Body */}
