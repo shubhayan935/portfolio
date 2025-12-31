@@ -19,7 +19,7 @@ const experienceData = [
     position: "Founding Engineer",
     period: "2025",
     logo: "/glance_icon.webp",
-    description: "Glance is an automated documentation platform that captures workflows, meetings, and decisions in real-time to keep teams effortlessly aligned."
+    description: "Glance is an automated documentation platform that captures workflows, meetings, and decisions in real-time to keep teams effortlessly aligned. Built product features including core context engine, Live-RAG pipeline and AWS S3 integration"
   },
   {
     id: "recei",
