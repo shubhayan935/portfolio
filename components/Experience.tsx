@@ -14,6 +14,14 @@ const experienceData = [
     description: "Series A. Building the AI product suite across the B2B and B2C applications, serving 2.5M+ users."
   },
   {
+    id: "glance",
+    company: "Glance",
+    position: "Founding Engineer",
+    period: "2025",
+    logo: "/glance_icon.png",
+    description: "Glance is an automated documentation platform that captures workflows, meetings, and decisions in real-time to keep teams effortlessly aligned."
+  },
+  {
     id: "recei",
     company: "Recei",
     position: "Software Engineer Intern",

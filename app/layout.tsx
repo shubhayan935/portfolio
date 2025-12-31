@@ -4,6 +4,7 @@ import { Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import ClientBody from "./ClientBody";
 import Script from "next/script";
+import { Analytics } from '@vercel/analytics/next';
 
 const garnett = localFont({
   src: [
@@ -58,6 +59,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${garnett.variable} ${instrumentSans.variable}`}>
+      <Analytics />
       <head>
         <Script
           crossOrigin="anonymous"
