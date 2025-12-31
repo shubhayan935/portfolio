@@ -18,7 +18,7 @@ const experienceData = [
     company: "Glance",
     position: "Founding Engineer",
     period: "2025",
-    logo: "/glance_icon.png",
+    logo: "/glance_icon.webp",
     description: "Glance is an automated documentation platform that captures workflows, meetings, and decisions in real-time to keep teams effortlessly aligned."
   },
   {
