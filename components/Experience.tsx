@@ -11,7 +11,7 @@ const experienceData = [
     position: "Engineering + Applied AI",
     period: "May 2025 - Present",
     logo: "/pogo_icon.jpeg",
-    description: "Series A. Building the AI product suite across the B2B and B2C applications, serving 2.5M+ users."
+    description: "Series B. Building the AI product suite across the B2B and B2C applications, serving 3M+ users."
   },
   {
     id: "glance",
