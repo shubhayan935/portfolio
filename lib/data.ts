@@ -55,7 +55,7 @@ export const experienceData = [
     id: "pogo",
     company: "Pogo",
     position: "Engineering + Applied AI",
-    period: "May 2025 - Present",
+    period: "May 2025 - May 2026",
     logo: "/pogo_icon.jpeg",
     description:
       "Series B. Building the AI product suite across the B2B and B2C applications, serving 3M+ users. At the intersection of allowing people to earn from their data through our consumer app and providing businesses with the ability to answer any business question instantly through this data pipeline.",
