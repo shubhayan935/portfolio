@@ -43,6 +43,26 @@ const instrumentSans = Instrument_Sans({
 export const metadata: Metadata = {
   title: "Shubhayan Srivastava",
   description: "Shubhayan Srivastava's personal website",
+  openGraph: {
+    title: "Shubhayan Srivastava",
+    description: "Shubhayan Srivastava's personal website",
+    url: "https://shubhayan.dev",
+    siteName: "Shubhayan Srivastava",
+    images: [
+      {
+        url: "/opengraph.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shubhayan Srivastava",
+    description: "Shubhayan Srivastava's personal website",
+    images: ["/opengraph.png"],
+  },
   icons: {
     icon: [
       { url: "/logo.png", type: "image/png" },
