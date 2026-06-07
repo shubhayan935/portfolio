@@ -3,65 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { motion } from "framer-motion"
 import { useState } from "react"
 import Image from "next/image"
-
-const experienceData = [
-  {
-    id: "pogo",
-    company: "Pogo",
-    position: "Engineering + Applied AI",
-    period: "May 2025 - Present",
-    logo: "/pogo_icon.jpeg",
-    description: "Series B. Building the AI product suite across the B2B and B2C applications, serving 3M+ users."
-  },
-  {
-    id: "glance",
-    company: "Glance",
-    position: "Founding Engineer",
-    period: "2025",
-    logo: "/glance_icon.webp",
-    description: "Glance is an automated documentation platform that captures workflows, meetings, and decisions in real-time to keep teams effortlessly aligned. Built product features including core context engine, Live-RAG pipeline and AWS S3 integration"
-  },
-  {
-    id: "recei",
-    company: "Recei",
-    position: "Software Engineer Intern",
-    period: "Oct 2024 - Dec 2024",
-    logo: "/recei_icon.jpeg",
-    description: "First engineering hire. Revolutionizing customer retention and relationships through dynamic digital receipts. Built a scalable business dashboard with AI-driven analytics and receipt customizations. Optimized APIs for receipt customization in Nest.js, reducing operational costs by 70% annually and contributing to a $150,000 increase in projected revenue through improved customer retention."
-  },
-  {
-    id: "thoughtminds",
-    company: "ThoughtMinds",
-    position: "Software Engineer Intern",
-    period: "May 2024 - Aug 2024",
-    logo: "/thoughtminds_icon.png",
-    description: "Developed AI-powered debugging agents for for the company’s AI copilot product, revolutionizing bug detection workflows with automated root-cause analysis and improving development efficiency."
-  },
-  {
-    id: "usc-isi",
-    company: "USC Information Sciences Institute",
-    position: "Undergraduate Research Assistant",
-    period: "Jan 2024 - May 2024",
-    logo: "/usc_isi_icon.jpg",
-    description: "Predicting stock prices from social media posts. Built and fine-tuned NLP models using VADER and BERT & restructured algorithm using AutoTriggER to improve sentiment analysis & entity recognition accuracy by 27%."
-  },
-  {
-    id: "formula-e",
-    company: "USC FormulaE Team",
-    position: "EV Data Analytics Center Lead",
-    period: "Sep 2023 - Jan 2024",
-    logo: "/usc_formulaE_icon.jpeg",
-    description: "Led data analytics initiatives for USC's Formula E racing team, developing performance tracking systems and analyzing vehicle telemetry data to optimize electric vehicle performance."
-  },
-  {
-    id: "thoughtworks",
-    company: "ThoughtWorks",
-    position: "Data Science Intern",
-    period: "Dec 2021 - Mar 2022",
-    logo: "/thoughtworks_icon.jpg",
-    description: "Worked on the AI4Bharat initiative’s Speech-to-Text project for over 47 Indian languages. Built a benchmarking dataset for ASR models from the ground up. Collected multilingual speech data by web-scraping open-source audio-visual content. Preprocessed and filtered data using SNR metrics and audio chunking. Developed and tested ASR models, leveraging Python packages like subprocess, IPython, numpy, and audio-processing libraries like wave, audioop, soundfile, and webrtcvad."
-  }
-]
+import { experienceData } from "@/lib/data"
 
 export default function Experience() {
   const [openItem, setOpenItem] = useState<string | undefined>(undefined)

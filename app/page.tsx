@@ -32,7 +32,15 @@ const staggerContainer = {
 export default function Home() {
   return (
     <ClickSpark sparkColor="#ffffff" sparkCount={12} sparkRadius={25} duration={500}>
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-black text-white relative">
+        <a
+          href="/llms.txt"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden lg:block fixed top-6 right-6 z-50 text-xs text-gray-400 hover:text-white border border-white/10 hover:border-white/30 rounded-full px-3 py-1.5 transition-all duration-200"
+        >
+          Are you an agent?
+        </a>
         <Header />
 
         {/* Main Content */}
