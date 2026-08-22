@@ -6,6 +6,7 @@ import Banner from "@/components/Banner"
 import Experience from "@/components/Experience"
 import Projects from "@/components/Projects"
 import Footer from "@/components/Footer"
+import Writing from "@/components/Writing"
 import { motion } from "framer-motion"
 
 const fadeInUp = {
@@ -62,6 +63,13 @@ export default function Home() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <Experience />
+          </motion.div>
+
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Writing />
           </motion.div>
           
           <motion.div

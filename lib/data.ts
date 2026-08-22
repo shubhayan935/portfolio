@@ -118,6 +118,17 @@ export const experienceData = [
 
 export const projectsData = [
   {
+    id: "relay",
+    title: "Relay",
+    url: "https://github.com/nac5504/Relay",
+    imageUrl: "/relay.png",
+    badge: "Conductor for Computer Use",
+    badgeColor: "bg-yellow-500 text-black",
+    description:
+      "Run and manage parallel computer use agents locally within containerized sub-environments, view workstream recordings, and hop in to take over the desktop for true human-agent collaboration.",
+    tags: ["SwiftUI / macOS", "Computer Use", "noVNC", "X11 / Xvfb Buffer"],
+  },
+  {
     id: "cortex",
     title: "Cortex",
     url: "https://devpost.com/software/claude-cortex",
@@ -138,6 +149,17 @@ export const projectsData = [
     description:
       "OS level AI agent that takes over and completes tasks for you. Tell Intervene what to do, and it will do it for you, autonomously in the background.",
     tags: ["Langchain", "Swift for MacOS", "FastAPI", "Llama + Llava"],
+  },
+  {
+    id: "nightshift",
+    title: "NightShift",
+    url: "https://www.youtube.com/watch?v=CyjmEA6L1G0",
+    imageUrl: "/nightshift.png",
+    badge: "YC Hackathon",
+    badgeColor: "bg-yellow-500 text-black",
+    description:
+      "Autonomous background coding agent that makes full-stack software changes in isolated sandboxes, built using Modal and Opencode. Give Nightshift a task, and it will execute/test the code, verify the UI, and draft a pull request for you in the background.",
+    tags: ["Modal MicroVMs", "Opencode SDK", "Cloudflare DO", "Playwright"],
   },
   {
     id: "ideavine",
@@ -188,5 +210,15 @@ export const projectsData = [
       "Reinforcement Learning",
       "Docker",
     ],
+  },
+]
+
+export const writingData = [
+  {
+    id: 0,
+    title: "Integrations That Write Themselves",
+    description: "Technical blog on some of my work at Ramp",
+    date: "14 Aug 2026",
+    url: "https://engineering.ramp.com/post/integrations-that-write-themselves"
   },
 ]
