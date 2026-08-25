@@ -14,9 +14,9 @@ export const siteConfig = {
     [
       "Hi, I'm Shubhayan, ",
       { text: "studying CS at USC", href: "https://www.cs.usc.edu/" },
-      ", where I spend most of my time in product, engineering and design. Currently, I work at ",
+      ", where I spend most of my time in product, engineering and design. Currently I work at ",
       { text: "Ramp", href: "https://www.ramp.com/" },
-      ", building agentic procurement for 70,000+ businesses.",
+      ", across Applied AI, Integrations and Procurement.",
     ],
     [
       "I'm extremely grateful to say that the things I've built have been collectively used by and impacted 5M+ people. Previously, I was one of 2 engineers building the AI Qual product from the ground up at ",
@@ -50,6 +50,15 @@ export const experienceData = [
     logo: "/ramp_icon.png",
     description:
       "Agentic Procurement for 70,000+ businesses, serving $100B in transaction volume.",
+  },
+  {
+    id: "8vc",
+    company: "8VC",
+    position: "Fellow",
+    period: "Summer 2026",
+    logo: "/8vc_icon.webp",
+    description:
+      "Met some cool people!",
   },
   {
     id: "pogo",
