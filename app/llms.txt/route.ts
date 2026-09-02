@@ -1,7 +1,14 @@
-import { siteConfig, experienceData, projectsData, getBioPlainText } from "@/lib/data"
+import {
+  siteConfig,
+  experienceData,
+  projectsData,
+  writingData,
+  getBioMarkdown,
+  getExperienceDescriptionMarkdown,
+} from "@/lib/data"
 
 export function GET() {
-  const bio = getBioPlainText()
+  const bio = getBioMarkdown()
   const sections = [
     `# ${siteConfig.name}`,
     "",
@@ -11,6 +18,7 @@ export function GET() {
     ...bio.map((line) => `\n${line}`),
     "",
     "## Contact",
+    `- Website: https://shubhayan.dev`,
     `- Email: ${siteConfig.email}`,
     `- GitHub: ${siteConfig.socials.github}`,
     `- LinkedIn: ${siteConfig.socials.linkedin}`,
@@ -19,13 +27,19 @@ export function GET() {
     "## Experience",
     ...experienceData.map(
       (exp) =>
-        `\n### ${exp.company} — ${exp.position} (${exp.period})\n${exp.description}`
+        `\n### ${exp.company} — ${exp.position} (${exp.period})\n${getExperienceDescriptionMarkdown(exp.description)}`
     ),
     "",
     "## Projects",
     ...projectsData.map(
       (proj) =>
         `\n### ${proj.title}${proj.badge ? ` [${proj.badge}]` : ""}\n${proj.description}\nURL: ${proj.url}\nTech: ${proj.tags.join(", ")}`
+    ),
+    "",
+    "## Writing",
+    ...writingData.map(
+      (writing) =>
+        `\n### [${writing.title}](${writing.url}) (${writing.date})\n${writing.description}`
     ),
     "",
   ]

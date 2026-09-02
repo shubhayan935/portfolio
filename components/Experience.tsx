@@ -3,7 +3,28 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { motion } from "framer-motion"
 import { useState } from "react"
 import Image from "next/image"
-import { experienceData } from "@/lib/data"
+import { Link as LinkIcon } from "lucide-react"
+import { experienceData, type BioSegment } from "@/lib/data"
+
+const linkClass =
+  "border-b border-dotted border-gray-400 hover:text-white hover:border-white hover:border-solid cursor-pointer transition-colors duration-200"
+
+function renderDescriptionSegment(segment: BioSegment, index: number) {
+  if (typeof segment === "string") return <React.Fragment key={index}>{segment}</React.Fragment>
+
+  return (
+    <a
+      key={index}
+      href={segment.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={linkClass}
+      aria-label={segment.text}
+    >
+      {segment.iconOnly ? <LinkIcon aria-hidden="true" className="inline-block size-3.5" /> : segment.text}
+    </a>
+  )
+}
 
 export default function Experience() {
   const [openItem, setOpenItem] = useState<string | undefined>(undefined)
@@ -59,7 +80,9 @@ export default function Experience() {
               </AccordionTrigger>
               <AccordionContent className="px-0 pt-6 pb-0 relative z-10">
                 <p className="text-gray-300 text-[15px]">
-                  {experience.description}
+                  {typeof experience.description === "string"
+                    ? experience.description
+                    : experience.description.map(renderDescriptionSegment)}
                 </p>
               </AccordionContent>
             </AccordionItem>

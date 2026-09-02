@@ -1,4 +1,32 @@
-export type BioSegment = string | { text: string; href: string }
+export type BioSegment = string | { text: string; href: string; iconOnly?: boolean }
+export type ExperienceDescription = string | BioSegment[]
+
+function getSegmentsText(
+  segments: BioSegment[],
+  linkFormatter: (text: string, href: string) => string
+): string {
+  return segments
+    .map((segment) =>
+      typeof segment === "string" ? segment : linkFormatter(segment.text, segment.href)
+    )
+    .join("")
+}
+
+export function getExperienceDescriptionPlainText(
+  description: ExperienceDescription
+): string {
+  return typeof description === "string"
+    ? description
+    : getSegmentsText(description, (text) => text)
+}
+
+export function getExperienceDescriptionMarkdown(
+  description: ExperienceDescription
+): string {
+  return typeof description === "string"
+    ? description
+    : getSegmentsText(description, (text, href) => `[${text}](${href})`)
+}
 
 export const siteConfig = {
   name: "Shubhayan Srivastava",
@@ -34,10 +62,12 @@ export const siteConfig = {
 }
 
 export function getBioPlainText(): string[] {
+  return siteConfig.bio.map((paragraph) => getSegmentsText(paragraph, (text) => text))
+}
+
+export function getBioMarkdown(): string[] {
   return siteConfig.bio.map((paragraph) =>
-    paragraph
-      .map((segment) => (typeof segment === "string" ? segment : segment.text))
-      .join("")
+    getSegmentsText(paragraph, (text, href) => `[${text}](${href})`)
   )
 }
 
@@ -57,8 +87,15 @@ export const experienceData = [
     position: "Fellow",
     period: "Summer 2026",
     logo: "/8vc_icon.webp",
-    description:
-      "Met some cool people!",
+    description: [
+      "Met some cool people ",
+      {
+        text: "8VC Spotlight",
+        href: "https://8vc.com/fellows/shubhayan-srivastava",
+        iconOnly: true,
+      },
+      "!",
+    ] as BioSegment[],
   },
   {
     id: "pogo",
