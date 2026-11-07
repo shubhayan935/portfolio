@@ -131,7 +131,7 @@ export const experienceData = [
     period: "May 2024 - Aug 2024",
     logo: "/thoughtminds_icon.png",
     description:
-      "Developed AI-powered debugging agents for for the company's AI copilot product, revolutionizing bug detection workflows with automated root-cause analysis and improving development efficiency.",
+      "Developed AI-powered debugging agents for the company's AI copilot product, revolutionizing bug detection workflows with automated root-cause analysis and improving development efficiency.",
   },
   {
     id: "usc-isi",
