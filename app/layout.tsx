@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Instrument_Sans } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import ClientBody from "./ClientBody";
 import Script from "next/script";
@@ -78,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${garnett.variable} ${instrumentSans.variable}`}>
+    <html lang="en" className={`${garnett.variable} ${instrumentSans.variable} ${GeistMono.variable}`}>
       <Analytics />
       <head>
         <Script

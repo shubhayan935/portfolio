@@ -23,7 +23,7 @@ function renderSegment(segment: BioSegment, index: number) {
 export default function Banner() {
   return (
     <section className="mb-16">
-      <div className="space-y-4 text-gray-200 text-justify text-lg">
+      <div className="space-y-4 text-gray-200 text-lg">
         {siteConfig.bio.map((paragraph, i) => (
           <p key={i} className="leading-relaxed">
             {paragraph.map(renderSegment)}

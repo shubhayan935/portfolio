@@ -47,12 +47,12 @@ export const siteConfig = {
       ", across Applied AI, Integrations and Procurement.",
     ],
     [
-      "I'm extremely grateful to say that the things I've built have been collectively used by and impacted 5M+ people. Previously, I was one of 2 engineers building the AI Qual product from the ground up at ",
+      "Things I've built have been used by 5M+ people. I was one of 2 engineers building AI Qual at ",
       { text: "Pogo", href: "https://www.joinpogo.com/" },
-      ", serving customers like Uber and Point72. In high school, I developed AI solutions for the Indian government in reducing air pollution, currently used across 15+ cities to help policymakers make data-driven decisions on air pollution.",
+      ", serving customers like Uber and Point72. In high school, I built air pollution analytics for the Indian government, now used by policymakers across 16 cities.",
     ],
     [
-      "I lead recruitment at ",
+      "I led recruitment at ",
       { text: "USC's premier startup accelerator", href: "https://www.troylabs.vc/" },
       " and ran ",
       { text: "USC's flagship incubator", href: "https://uscsep.com/" },
@@ -75,7 +75,7 @@ export const experienceData = [
   {
     id: "ramp",
     company: "Ramp",
-    position: "Engineering + Product",
+    position: "Software Engineer",
     period: "May 2026 - Present",
     logo: "/ramp_icon.png",
     description:
@@ -84,7 +84,7 @@ export const experienceData = [
   {
     id: "8vc",
     company: "8VC",
-    position: "Fellow",
+    position: "Engineering Fellow",
     period: "Summer 2026",
     logo: "/8vc_icon.webp",
     description: [
@@ -100,7 +100,7 @@ export const experienceData = [
   {
     id: "pogo",
     company: "Pogo",
-    position: "Engineering + Applied AI",
+    position: "Software Engineer",
     period: "May 2025 - May 2026",
     logo: "/pogo_icon.jpeg",
     description:
