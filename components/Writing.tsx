@@ -1,11 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { writingData } from "@/lib/data"
+import { VoxelHeading } from "@/components/Voxel"
 
 export default function Writing() {
   return (
     <section className="mb-16">
-      <h2 className="text-2xl font-normal mb-4 font-garnett">Writing</h2>
+      <VoxelHeading className="mb-6" color="#5ab0ff">Writing</VoxelHeading>
       <div className="grid grid-cols-1">
         {writingData.map((writing) => (
           <a key={writing.id} href={writing.url} target="_blank" rel="noopener noreferrer">

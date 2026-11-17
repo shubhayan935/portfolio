@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Instrument_Sans } from "next/font/google";
+import { Instrument_Sans, Pixelify_Sans } from "next/font/google";
 import "./globals.css";
 import ClientBody from "./ClientBody";
 import Script from "next/script";
@@ -32,6 +32,11 @@ const garnett = localFont({
   variable: "--font-garnett",
   display: "swap",
   fallback: ["system-ui", "-apple-system", "sans-serif"],
+});
+
+const pixelify = Pixelify_Sans({
+  subsets: ["latin"],
+  variable: "--font-pixel",
 });
 
 const instrumentSans = Instrument_Sans({
@@ -78,7 +83,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${garnett.variable} ${instrumentSans.variable}`}>
+    <html lang="en" className={`${garnett.variable} ${instrumentSans.variable} ${pixelify.variable}`}>
       <Analytics />
       <head>
         <Script

@@ -191,3 +191,41 @@
 .shimmer-card:hover::before {
   animation: cardShimmerDiagonal 1s ease-out;
 }
+
+/* Voxel theme */
+.font-pixel {
+  font-family: var(--font-pixel), system-ui, sans-serif;
+  letter-spacing: 0;
+}
+.voxel-card {
+  border-radius: 0 !important;
+  border: 2px solid #2b2f38 !important;
+  box-shadow: 6px 6px 0 0 #1a1d23;
+  transition: transform 150ms steps(3), box-shadow 150ms steps(3), border-color 150ms;
+}
+.voxel-card:hover {
+  transform: translate(-3px, -3px);
+  border-color: #8a8f98 !important;
+  box-shadow: 9px 9px 0 0 #3d4250;
+}
+.voxel-row {
+  border: 2px solid transparent;
+}
+.voxel-row:hover {
+  border-color: #2b2f38;
+}
+.voxel-row-open {
+  background: #0b0c0f;
+  border-color: #2b2f38;
+  box-shadow: 6px 6px 0 0 #1a1d23;
+}
+@keyframes voxel-drop {
+  from { transform: translateY(-40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.voxel-drop {
+  animation: voxel-drop 350ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .voxel-drop { animation: none; }
+}

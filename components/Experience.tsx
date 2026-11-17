@@ -5,6 +5,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { Link as LinkIcon } from "lucide-react"
 import { experienceData, type BioSegment } from "@/lib/data"
+import { VoxelHeading } from "@/components/Voxel"
 
 const linkClass =
   "border-b border-dotted border-gray-400 hover:text-white hover:border-white hover:border-solid cursor-pointer transition-colors duration-200"
@@ -31,7 +32,7 @@ export default function Experience() {
 
   return (
     <section className="mb-16">
-      <h2 className="text-2xl font-normal mb-4 font-garnett">Work</h2>
+      <VoxelHeading className="mb-6" color="#5cc160">Work</VoxelHeading>
 
       <Accordion 
         type="single" 
@@ -45,30 +46,23 @@ export default function Experience() {
           return (
             <React.Fragment key={experience.id}>
             <motion.div
-              className={`shimmer-card relative rounded-2xl p-2 transition-all duration-300 cursor-pointer hover:shadow-inner hover:shadow-white ${
+              className={`relative p-2 transition-all duration-200 cursor-pointer voxel-row ${
                 isOpen 
-                  ? 'backdrop-blur-xl bg-white/5 shadow-2xl' 
+                  ? 'voxel-row-open' 
                   : 'bg-transparent'
               }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: "easeOut", delay: index * 0.05 }}
             >
-              {/* Glass shine effect - only when open */}
-              {isOpen && (
-                <>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-t-2xl"></div>
-                  <div className="glass-refraction rounded-2xl" />
-                </>
-              )}
+              
             
             <AccordionItem value={experience.id} className={`transition-all duration-200 p-2`}>
               <AccordionTrigger className="px-0 py-0 hover:no-underline relative z-10 cursor-pointer">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center`}>
-                      <Image src={experience.logo} width={48} height={48} alt={`${experience.company} logo`} className="rounded-lg" />
+                      <Image src={experience.logo} width={48} height={48} alt={`${experience.company} logo`} className="rounded-none" />
                     </div>
                     <div className="text-left">
                       <h3 className="text-lg font-normal text-white font-garnett">{experience.company}</h3>
