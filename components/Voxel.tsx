@@ -648,22 +648,3 @@ export function VoxelBuilder() {
     </div>
   )
 }
-
-export function VoxelCube({ color = "#f4ff5c", className = "" }: { color?: string; className?: string }) {
-  return (
-    <svg viewBox="-9 -10 18 19" className={`inline-block size-5 ${className}`} aria-hidden="true">
-      <polygon points="0,-9 8,-4.5 0,0 -8,-4.5" fill={color} />
-      <polygon points="0,0 8,-4.5 8,4.5 0,9" fill={shade(color, 0.62)} />
-      <polygon points="-8,-4.5 0,0 0,9 -8,4.5" fill={shade(color, 0.8)} />
-    </svg>
-  )
-}
-
-export function VoxelHeading({ children, className = "", color }: { children: React.ReactNode; className?: string; color?: string }) {
-  return (
-    <h2 className={`flex items-center gap-3 text-2xl font-normal font-garnett ${className}`}>
-      <VoxelCube color={color} />
-      {children}
-    </h2>
-  )
-}

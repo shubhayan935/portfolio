@@ -3,12 +3,11 @@ import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { projectsData } from "@/lib/data"
-import { VoxelHeading } from "@/components/Voxel"
 
 export default function Projects() {
   return (
     <section className="mb-16">
-      <VoxelHeading className="mb-8" color="#c0533a">Cool Stuff I&apos;ve Built</VoxelHeading>
+      <h2 className="text-2xl font-normal mb-8 font-garnett">Cool Stuff I&apos;ve Built</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {projectsData.map((project) => (
           <a key={project.id} href={project.url} target="_blank" rel="noopener noreferrer">

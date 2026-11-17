@@ -5,7 +5,6 @@ import { useState } from "react"
 import Image from "next/image"
 import { Link as LinkIcon } from "lucide-react"
 import { experienceData, type BioSegment } from "@/lib/data"
-import { VoxelHeading } from "@/components/Voxel"
 
 const linkClass =
   "border-b border-dotted border-gray-400 hover:text-white hover:border-white hover:border-solid cursor-pointer transition-colors duration-200"
@@ -32,7 +31,7 @@ export default function Experience() {
 
   return (
     <section className="mb-16">
-      <VoxelHeading className="mb-6" color="#5cc160">Work</VoxelHeading>
+      <h2 className="text-2xl font-normal mb-4 font-garnett">Work</h2>
 
       <Accordion 
         type="single" 
