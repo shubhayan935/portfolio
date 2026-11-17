@@ -193,10 +193,6 @@
 }
 
 /* Voxel theme */
-.font-pixel {
-  font-family: var(--font-pixel), system-ui, sans-serif;
-  letter-spacing: 0;
-}
 .voxel-card {
   border-radius: 0 !important;
   border: 2px solid #2b2f38 !important;

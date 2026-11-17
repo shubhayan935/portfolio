@@ -29,16 +29,16 @@ export default function Header() {
     >
       <div className={`relative transition-all duration-500 ease-out font-garnett ${
         isScrolled 
-          ? 'backdrop-blur-xl backdrop-saturate-150 backdrop-contrast-125 bg-white/10 rounded-2xl shadow-2xl px-0'
+          ? 'backdrop-blur-xl backdrop-saturate-150 backdrop-contrast-125 bg-white/10 rounded-none shadow-2xl px-0'
           : 'bg-black px-0'
       }`}>
         {isScrolled && (
-          <div className="glass-refraction rounded-2xl" />
+          <div className="glass-refraction rounded-none" />
         )}
         {/* Glass shine effect - only when scrolled */}
         {isScrolled && (
           <>
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
+            <div className="absolute inset-0 rounded-none bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           </>
         )}

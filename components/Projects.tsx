@@ -8,7 +8,7 @@ import { VoxelHeading } from "@/components/Voxel"
 export default function Projects() {
   return (
     <section className="mb-16">
-      <VoxelHeading className="mb-8" color="#c0533a">Projects</VoxelHeading>
+      <VoxelHeading className="mb-8" color="#c0533a">Cool Stuff I&apos;ve Built</VoxelHeading>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {projectsData.map((project) => (
           <a key={project.id} href={project.url} target="_blank" rel="noopener noreferrer">
@@ -26,7 +26,7 @@ export default function Projects() {
               <CardContent className="p-6 flex flex-col h-full">
                 {/* Title row with external link icon */}
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl text-white font-pixel">{project.title}</h3>
+                  <h3 className="text-xl font-normal text-white font-garnett">{project.title}</h3>
                   <ExternalLink className="size-4 text-white/70 group-hover:text-white transition-colors" />
                 </div>
 
