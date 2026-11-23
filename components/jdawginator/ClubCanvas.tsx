@@ -10,7 +10,15 @@ export default function ClubCanvas({ engine, onReady }: { engine: AudioEngine; o
     const canvas = ref.current
     if (!canvas) return
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const club = createClub(canvas, engine, { reducedMotion })
+    let club: Club
+    try {
+      club = createClub(canvas, engine, { reducedMotion })
+    } catch {
+      let raf = 0, last = performance.now()
+      const loop = (now: number) => { engine.update(Math.min(0.05, (now - last) / 1000)); last = now; raf = requestAnimationFrame(loop) }
+      raf = requestAnimationFrame(loop)
+      return () => cancelAnimationFrame(raf)
+    }
     onReady(club)
     const io = new IntersectionObserver(([e]) => club.setActive(e.isIntersecting), { threshold: 0 })
     io.observe(canvas)
