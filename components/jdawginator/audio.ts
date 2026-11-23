@@ -42,6 +42,7 @@ export class AudioEngine {
   private agc = { low: new Agc(), bass: new Agc(), mid: new Agc(), high: new Agc(), level: new Agc() }
   private barAgc = new Float32Array(BAR_COUNT).fill(1e-3)
   private lowBassSince = 0
+  private phaseErr = 0
   private highHist: number[] = []
   readonly frame: AudioFrame = {
     playing: false, time: 0, beat: 0, bpm: 124, confidence: 0, kick: 0, pulse: 0, bass: 0, mid: 0, high: 0,
@@ -99,7 +100,7 @@ export class AudioEngine {
 
   private updateTempo() {
     const now = this.clock
-    this.onsets = this.onsets.filter((t) => now - t < 10)
+    this.onsets = this.onsets.filter((t) => now - t < 10 && t <= now)
     const hist = new Float32Array(157)
     for (let i = 0; i < this.onsets.length; i++)
       for (let j = i + 1; j < this.onsets.length && j < i + 8; j++) {
@@ -123,10 +124,14 @@ export class AudioEngine {
   update(dt: number) {
     const f = this.frame
     dt = Math.min(dt, 0.1)
-    this.clock += dt
     f.playing = !!this.ctx && !this.el.paused
     f.time = this.el.currentTime
-    f.beat += (dt * f.bpm) / 60
+    const prevClock = this.clock
+    this.clock = f.playing ? this.el.currentTime : this.clock + dt
+    if (this.clock < prevClock - 0.05 || this.clock > prevClock + 1) { this.onsets = []; this.lastOnset = -1 }
+    const corr = this.phaseErr * (1 - Math.exp(-dt * 5))
+    this.phaseErr -= corr
+    f.beat += (dt * f.bpm) / 60 + corr
     f.kick *= Math.exp(-dt * 7)
     f.drop *= Math.exp(-dt * 0.45)
 
@@ -159,7 +164,7 @@ export class AudioEngine {
       this.updateTempo()
       f.kick = 1
       const frac = f.beat - Math.round(f.beat)
-      f.beat -= frac * 0.35
+      this.phaseErr = -frac * 0.35
       const aligned = Math.abs(frac) < 0.12 ? 1 : 0
       f.confidence = f.confidence * 0.85 + aligned * 0.15
     }

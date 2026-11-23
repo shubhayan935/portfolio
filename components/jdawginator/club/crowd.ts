@@ -2,15 +2,18 @@ import * as THREE from "three"
 import { BOX, rand, pick } from "./voxels"
 import type { AudioFrame } from "../audio"
 
-export type Style = "idle" | "bounce" | "twostep" | "pump" | "handsup" | "jump" | "headbang" | "sway" | "clap" | "phone" | "bartender" | "dj"
+export type Style =
+  | "idle" | "bounce" | "twostep" | "pump" | "handsup" | "jump" | "headbang" | "sway" | "clap" | "phone" | "bartender"
+  | "dj_mix" | "dj_nod" | "dj_ear" | "dj_pump" | "dj_flick" | "dj_point" | "dj_hands" | "dj_clap"
 
 type Dancer = {
   x: number; z: number; yaw: number; h: number
   shirt: THREE.Color; pants: THREE.Color; skin: THREE.Color; hair: THREE.Color; shoe: THREE.Color
   hairStyle: number; glasses: boolean; phone: boolean; cup: boolean
   style: Style; prev: Style; blend: number; nextSwitch: number; pendingAt: number; pending: Style | null
-  off: number; bias: number; fixed: boolean; seed: number
-  pose: Float32Array; prevPose: Float32Array
+  off: number; bias: number; fixed: boolean; seed: number; isDJ: boolean
+  rate: number; prevRate: number; mirror: boolean; prevMirror: boolean; blendDur: number; nf: number; offs: Float32Array; lastBeat: number; lastE: number
+  pose: Float32Array
 }
 
 // pose layout
@@ -24,7 +27,15 @@ const PANTS = ["#141416", "#1c2433", "#2a3550", "#0e0e10", "#3a3a3f", "#4a3a2a",
 const HAIRS = ["#140e0a", "#2b1d14", "#4a3020", "#6b4a2b", "#c9a46a", "#0a0a0a", "#8a2a1a", "#d8d2c8"]
 const SHOES = ["#f2f2f2", "#0b0b0c", "#1a1a1a", "#e8e2d6", "#3a3a40"]
 
+const TAU = Math.PI * 2
 const sm = (x: number) => x * x * (3 - 2 * x)
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
+// smooth periodic accent that peaks on every whole beat
+const peak = (b: number, k: number) => Math.pow(0.5 + 0.5 * Math.cos(TAU * b), k)
+const noise = (t: number, s: number) => Math.sin(t * 0.73 + s) * 0.5 + Math.sin(t * 1.37 + s * 2.1) * 0.3 + Math.sin(t * 2.21 + s * 3.7) * 0.2
+const SWAP: [number, number][] = [[7, 10], [8, 11], [9, 12]]
+const NEGATE = [2, 3, 6, 14, 15]
+const NO_MIRROR = new Set<Style>(["phone", "idle", "bartender"])
 
 export class Crowd {
   dancers: Dancer[] = []
@@ -36,7 +47,10 @@ export class Crowd {
   constructor(scene: THREE.Scene, spots: { x: number; z: number; yaw: number; style?: Style; fixed?: boolean }[], djSpot: { x: number; z: number; y: number }) {
     for (const s of spots) this.dancers.push(this.make(s.x, s.z, s.yaw, s.style ?? "idle", !!s.fixed))
     this.djY = djSpot.y
-    const dj = this.make(djSpot.x, djSpot.z, 0, "dj", true)
+    const dj = this.make(djSpot.x, djSpot.z, 0, "dj_mix", false)
+    dj.isDJ = true
+    dj.off = 0
+    dj.bias = 1
     dj.shirt = new THREE.Color("#0c0c0e")
     dj.pants = new THREE.Color("#121214")
     dj.skin = new THREE.Color("#b07a52")
@@ -100,9 +114,10 @@ export class Crowd {
       shirt: new THREE.Color(pick(SHIRTS)), pants: new THREE.Color(pick(PANTS)), skin: new THREE.Color(pick(SKINS)),
       hair: new THREE.Color(pick(HAIRS)), shoe: new THREE.Color(pick(SHOES)),
       hairStyle, glasses: rand() < 0.12, phone: rand() < 0.35, cup: rand() < 0.25,
-      style, prev: style, blend: 1, nextSwitch: rand() * 8, pendingAt: 0, pending: null,
-      off: (rand() - 0.5) * 0.12, bias: 0.65 + rand() * 0.55, fixed, seed: rand() * 100,
-      pose: new Float32Array(POSE_N), prevPose: new Float32Array(POSE_N),
+      style, prev: style, blend: 1, nextSwitch: rand() * 10, pendingAt: 0, pending: null,
+      off: (rand() - 0.5) * 0.14 + (rand() < 0.15 ? 0.12 : 0), bias: 0.6 + rand() * 0.65, fixed, seed: rand() * 100, isDJ: false,
+      rate: 1, prevRate: 1, mirror: rand() < 0.5, prevMirror: false, blendDur: 0.6 + rand() * 0.6, nf: 0.7 + rand() * 0.6, offs: new Float32Array(POSE_N), lastBeat: 0, lastE: 0,
+      pose: new Float32Array(POSE_N),
     }
   }
 
@@ -115,7 +130,16 @@ export class Crowd {
       for (const [k, v] of table) { s += v / tot; if (r < s) return k }
       return table[0][0]
     }
-    if (f.drop > 0.6) return w([["jump", 4], ["handsup", 4], ["pump", 2]])
+    if (d.isDJ) {
+      if (f.drop > 0.6) return w([["dj_hands", 4], ["dj_pump", 2], ["dj_flick", 2]])
+      switch (f.section) {
+        case "idle": return w([["dj_mix", 3], ["dj_ear", 2], ["dj_nod", 1]])
+        case "break": return f.tension > 0.5 ? w([["dj_clap", 3], ["dj_hands", 1.2], ["dj_ear", 1.5], ["dj_point", 0.8]]) : w([["dj_ear", 3], ["dj_mix", 3], ["dj_point", 0.6]])
+        case "groove": return w([["dj_mix", 4], ["dj_nod", 3], ["dj_ear", 2], ["dj_pump", 0.7], ["dj_flick", 0.6], ["dj_point", 0.4]])
+        case "peak": return w([["dj_pump", 3], ["dj_flick", 3], ["dj_nod", 2], ["dj_mix", 1.5], ["dj_point", 1.5], ["dj_hands", 1]])
+      }
+    }
+    if (f.drop > 0.6) return w([["jump", 4], ["handsup", 4], ["pump", 2], ["bounce", 1]])
     switch (f.section) {
       case "idle": return w([["idle", 7], ["sway", 2], ["phone", 0.3]])
       case "break": return f.tension > 0.45 ? w([["clap", 4], ["handsup", 3], ["phone", 1.5], ["sway", 1]]) : w([["sway", 5], ["phone", 1.5], ["handsup", 1], ["idle", 1]])
@@ -124,8 +148,13 @@ export class Crowd {
     }
   }
 
-  private posefor(style: Style, d: Dancer, b: number, e: number, f: AudioFrame, out: Float32Array) {
-    const t = this.time + d.seed
+  private rateFor(style: Style) {
+    if (style === "idle" || style === "phone" || style === "sway" || style.startsWith("dj_")) return 1
+    return rand() < 0.2 ? 0.5 : 1
+  }
+
+  private posefor(style: Style, d: Dancer, b: number, e: number, f: AudioFrame, out: Float32Array, mirror: boolean) {
+    const t = this.time * d.nf + d.seed
     const ph = b - Math.floor(b)
     const bnc = 0.5 - 0.5 * Math.cos(2 * Math.PI * b)
     const half = Math.sin(Math.PI * b)
@@ -164,7 +193,7 @@ export class Crowd {
         break
       case "pump":
         out[P_KNEE] = 0.14 + 0.38 * e * bnc
-        out[P_RP] = -2.55 - 0.45 * Math.exp(-ph * 5); out[P_RR] = 0.25; out[P_RE] = 0.9 - 0.7 * Math.exp(-ph * 5)
+        out[P_RP] = -2.55 - 0.45 * peak(b, 6); out[P_RR] = 0.25; out[P_RE] = 0.9 - 0.7 * peak(b, 6)
         out[P_LP] = -0.4 - 0.3 * bnc; out[P_LE] = 1.4
         out[P_HP] = 0.3 * bnc * e - 0.15
         break
@@ -179,9 +208,9 @@ export class Crowd {
         break
       }
       case "jump": {
-        const air = Math.max(0, Math.sin(Math.PI * ((ph + 0.85) % 1) * 1.6))
-        out[P_JUMP] = 2.2 * e * Math.min(1, air)
-        out[P_KNEE] = 0.15 + 0.5 * Math.exp(-ph * 6) * e
+        const air = Math.pow(Math.max(0, Math.sin(TAU * (b - 0.12))), 1.5)
+        out[P_JUMP] = 2.2 * e * air
+        out[P_KNEE] = 0.15 + 0.5 * peak(b, 4) * e
         out[P_LP] = -2.9 + 0.3 * air; out[P_RP] = -2.9 + 0.3 * air
         out[P_LR] = 0.3; out[P_RR] = 0.3
         out[P_LE] = 0.3; out[P_RE] = 0.3
@@ -191,10 +220,13 @@ export class Crowd {
       case "headbang":
         out[P_KNEE] = 0.15 + 0.3 * bnc * e
         out[P_LEAN] = 0.22 + 0.2 * bnc
-        out[P_HP] = 0.75 * Math.exp(-ph * 4) - 0.1
+      {
+        out[P_HP] = 0.75 * peak(b, 4) - 0.1
         out[P_LP] = -0.3; out[P_LE] = 1.0
-        out[P_RP] = Math.floor(b / 16) % 2 ? -2.7 : -0.3; out[P_RE] = Math.floor(b / 16) % 2 ? 0.5 : 1.0
+        const up = sm(clamp01(noise(t * 0.15, d.seed + 5) * 1.6 + 0.3))
+        out[P_RP] = -0.3 - 2.4 * up; out[P_RE] = 1.0 - 0.5 * up
         break
+      }
       case "sway": {
         const s = Math.sin((Math.PI * b) / 2)
         out[P_KNEE] = 0.1 + 0.15 * bnc * e
@@ -208,7 +240,7 @@ export class Crowd {
         break
       }
       case "clap": {
-        const c = Math.exp(-ph * 7)
+        const c = peak(b, 7)
         out[P_KNEE] = 0.12 + 0.2 * bnc
         out[P_LP] = -2.6; out[P_RP] = -2.6
         out[P_LR] = 0.05 + 0.42 * (1 - c) - 0.25; out[P_RR] = 0.05 + 0.42 * (1 - c) - 0.25
@@ -233,22 +265,44 @@ export class Crowd {
         out[P_HY] = Math.sin(t * 0.25) * 0.5
         break
       }
-      case "dj": {
-        const bar = Math.floor(b / 4)
-        const phrase = Math.floor(b / 32)
+      case "dj_mix": case "dj_nod": case "dj_ear": case "dj_pump": case "dj_flick": case "dj_point": case "dj_hands": case "dj_clap": {
+        const knob = noise(t * 2.2, d.seed), knob2 = noise(t * 1.7, d.seed + 9)
         out[P_KNEE] = 0.12 + 0.3 * bnc * e
         out[P_LEAN] = 0.2
-        out[P_HP] = 0.35 + 0.45 * Math.exp(-ph * 5) * e
-        const knob = Math.sin(t * 2.2 + Math.sin(t * 0.7) * 2)
-        out[P_RP] = -0.55 + knob * 0.08; out[P_RE] = 0.9; out[P_RR] = -0.05 + knob * 0.06
-        const raise = f.drop > 0.6 || (f.section === "peak" && bar % 8 === 7)
-        const ear = (phrase % 2 === 1 && bar % 8 < 3) || f.section === "break"
-        if (raise) { out[P_LP] = -2.75; out[P_LE] = 0.4; out[P_LR] = 0.2; out[P_HP] = -0.2 + 0.3 * bnc }
-        else if (ear) { out[P_LP] = -0.65; out[P_LE] = 2.55; out[P_LR] = 0.72; out[P_HY] = 0.25 }
-        else { out[P_LP] = -0.55 + Math.sin(t * 3.1) * 0.05; out[P_LE] = 0.9; out[P_LR] = -0.05 }
-        if (f.section !== "break" && !raise) out[P_HY] = Math.sin(b * Math.PI * 0.25) * 0.15
+        out[P_HP] = 0.3 + 0.35 * peak(b, 5) * e
+        out[P_HY] = Math.sin(b * Math.PI * 0.25) * 0.12
+        out[P_LP] = -0.55 + knob2 * 0.08; out[P_LE] = 0.9; out[P_LR] = -0.05 + knob2 * 0.06
+        out[P_RP] = -0.55 + knob * 0.1; out[P_RE] = 0.9; out[P_RR] = -0.05 + knob * 0.08
+        if (style === "dj_nod") { out[P_HP] = 0.15 + 0.7 * peak(b, 4) * e; out[P_LEAN] = 0.3; out[P_KNEE] = 0.15 + 0.4 * bnc * e }
+        else if (style === "dj_ear") { out[P_LP] = -0.65; out[P_LE] = 2.55; out[P_LR] = 0.72; out[P_HY] = 0.25; out[P_TILT] = 0.08; out[P_HP] = 0.25 + 0.2 * peak(b, 4) }
+        else if (style === "dj_pump") { const k = peak(b, 6); out[P_RP] = -2.5 - 0.45 * k; out[P_RE] = 0.9 - 0.7 * k; out[P_RR] = 0.2; out[P_HP] = -0.1 + 0.45 * k; out[P_LEAN] = 0.1 }
+        else if (style === "dj_flick") { const k = peak(b + 0.04, 8); out[P_RP] = -2.35; out[P_RR] = 0.15; out[P_RE] = 0.3 + 1.3 * k; out[P_HP] = 0.1 + 0.4 * k; out[P_LEAN] = 0.08 }
+        else if (style === "dj_point") { const sweep = noise(t * 0.3, d.seed + 2) * 0.4; out[P_RP] = -1.75 + 0.15 * peak(b, 6); out[P_RE] = 0.15; out[P_RR] = 0.1 + sweep; out[P_HY] = sweep * 0.6; out[P_HP] = 0; out[P_LEAN] = 0.05 }
+        else if (style === "dj_hands") {
+          const wave = Math.sin((Math.PI * b) / 2) * 0.3
+          out[P_LP] = -2.8; out[P_RP] = -2.8; out[P_LR] = 0.4 + wave; out[P_RR] = 0.4 - wave; out[P_LE] = 0.3; out[P_RE] = 0.3
+          out[P_HP] = -0.25 + 0.2 * bnc; out[P_LEAN] = -0.05; out[P_KNEE] = 0.15 + 0.4 * bnc * e
+        } else if (style === "dj_clap") {
+          const c = peak(b, 7)
+          out[P_LP] = -2.6; out[P_RP] = -2.6; out[P_LR] = 0.22 - 0.42 * c; out[P_RR] = 0.22 - 0.42 * c; out[P_LE] = 0.6; out[P_RE] = 0.6
+          out[P_HP] = -0.2; out[P_LEAN] = 0
+        }
         break
       }
+    }
+    if (style !== "bartender") {
+      const n1 = noise(t * 0.6, d.seed), n2 = noise(t * 0.45, d.seed + 3.1), n3 = noise(t * 0.8, d.seed + 7.7)
+      const k = d.isDJ ? 0.4 : 1
+      out[P_TWIST] += n1 * 0.1 * k
+      out[P_HY] += n2 * 0.25 * k
+      out[P_TILT] += n3 * 0.03 * k
+      out[P_SX] += n1 * 0.12 * k
+      out[P_LP] += n2 * 0.12 * k; out[P_RP] += n1 * 0.12 * k
+      out[P_LE] += n3 * 0.15 * k; out[P_RE] -= n2 * 0.15 * k
+    }
+    if (mirror && !NO_MIRROR.has(style)) {
+      for (const [a, c] of SWAP) { const v = out[a]; out[a] = out[c]; out[c] = v }
+      for (const a of NEGATE) out[a] = -out[a]
     }
   }
 
@@ -256,30 +310,49 @@ export class Crowd {
     this.time += dt
     const crowdE = f.playing ? Math.min(1, 0.35 + f.energy * 0.75 + f.drop * 0.3) : 0.12
     const _m = this.tm
+    const spb = 60 / f.bpm
+    const sectionChanged = f.section !== this.lastSection
+    const dropHit = f.drop > 0.95 && !this.dropSeen
     this.dancers.forEach((d, i) => {
       d.nextSwitch -= dt
       if (!d.fixed) {
         if (d.pending && this.time >= d.pendingAt) {
-          d.prev = d.style; d.prevPose.set(d.pose); d.style = d.pending; d.pending = null; d.blend = 0
+          if (d.blend < 1) {
+            this.posefor(d.style, d, d.lastBeat * d.rate, d.lastE, f, this.tmpPose, d.mirror)
+            for (let j = 0; j < POSE_N; j++) d.offs[j] = d.pose[j] - this.tmpPose[j]
+          } else d.offs.fill(0)
+          d.prev = d.style; d.prevRate = d.rate; d.prevMirror = d.mirror
+          d.style = d.pending; d.pending = null; d.blend = 0
+          d.rate = this.rateFor(d.style); d.mirror = rand() < 0.5
         } else if (d.nextSwitch <= 0 && !d.pending) {
           d.pending = this.choose(d, f)
-          d.pendingAt = this.time
-          d.nextSwitch = (32 + Math.floor(rand() * 3) * 16) * (60 / f.bpm) * (0.8 + rand() * 0.4)
+          if (d.isDJ) {
+            const toBar = (4 - (((f.beat % 4) + 4) % 4)) % 4
+            d.pendingAt = this.time + toBar * spb
+            d.nextSwitch = toBar * spb + (rand() < 0.6 ? 8 : 16) * spb
+          } else {
+            d.pendingAt = this.time + rand() * 2 * spb
+            d.nextSwitch = (16 + Math.floor(rand() * 4) * 8) * spb * (0.7 + rand() * 0.6)
+          }
+        }
+        if (dropHit || (sectionChanged && (d.isDJ || rand() < 0.75))) {
+          d.pending = this.choose(d, f)
+          d.pendingAt = this.time + (d.isDJ || dropHit ? rand() * 0.25 : rand() * 3.5)
         }
       }
-      if (f.section !== this.lastSection || (f.drop > 0.95 && !this.dropSeen)) {
-        if (!d.fixed) { d.pending = this.choose(d, f); d.pendingAt = this.time + rand() * 1.4 }
-      }
       const proximity = Math.max(0, Math.min(1, 1 - (d.z + 20) / 70))
-      const e = d.style === "dj" ? Math.max(0.5, crowdE) : Math.min(1, crowdE * d.bias * (0.75 + proximity * 0.45))
+      const e = d.isDJ ? Math.max(0.5, crowdE) : Math.min(1, crowdE * d.bias * (0.75 + proximity * 0.45))
       const beat = f.beat + d.off
-      this.posefor(d.style, d, beat, e, f, this.cur)
-      d.blend = Math.min(1, d.blend + dt / 0.55)
+      this.posefor(d.style, d, beat * d.rate, e, f, this.cur, d.mirror)
+      const dur = d.isDJ ? 0.4 : d.blendDur
+      d.blend = Math.min(1, d.blend + dt / dur)
       if (d.blend < 1) {
-        this.posefor(d.prev, d, beat, e, f, this.tmpPose)
+        this.posefor(d.prev, d, beat * d.prevRate, e, f, this.tmpPose, d.prevMirror)
         const k = sm(d.blend)
-        for (let j = 0; j < POSE_N; j++) d.pose[j] = this.tmpPose[j] + (this.cur[j] - this.tmpPose[j]) * k
+        for (let j = 0; j < POSE_N; j++) d.pose[j] = this.tmpPose[j] + (this.cur[j] - this.tmpPose[j]) * k + d.offs[j] * (1 - k)
       } else d.pose.set(this.cur)
+      d.lastBeat = beat
+      d.lastE = e
       this.write(i, d)
     })
     this.lastSection = f.section
@@ -307,8 +380,11 @@ export class Crowd {
   private write(i: number, d: Dancer) {
     const { root, pelvis, torso, chest, head, sh, el, hip, kn } = this.M
     const p = d.pose, M = this.meshes, r = this.r
-    const y0 = d.style === "dj" ? this.djY : 0
-    root.makeRotationY(d.yaw).setPosition(d.x, y0, d.z)
+    const y0 = d.isDJ ? this.djY : 0
+    const wander = d.fixed || d.isDJ ? 0 : 1
+    const tw = this.time * 0.11 * d.nf
+    root.makeRotationY(d.yaw + wander * noise(tw, d.seed + 11) * 0.4)
+      .setPosition(d.x + wander * noise(tw * 0.7, d.seed + 13) * 0.45, y0, d.z + wander * noise(tw * 0.6, d.seed + 17) * 0.35)
     root.multiply(r.makeScale(d.h, d.h, d.h))
     const knee = Math.min(0.85, Math.max(0, p[P_KNEE]))
     const P = 6 * Math.cos(knee)
