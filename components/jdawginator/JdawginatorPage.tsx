@@ -35,6 +35,7 @@ export default function JdawginatorPage() {
   const club = useRef<Club | null>(null)
   const [shot, setShot] = useState<{ shot: ShotName; auto: boolean }>({ shot: "floor", auto: true })
   const [headerVisible, setHeaderVisible] = useState(true)
+  const [atTop, setAtTop] = useState(true)
   const [playing, setPlaying] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
 
@@ -51,6 +52,13 @@ export default function JdawginatorPage() {
     engine.el.addEventListener("pause", on)
     return () => { clearInterval(id); engine.el.removeEventListener("play", on); engine.el.removeEventListener("pause", on); engine.pause() }
   }, [engine])
+
+  useEffect(() => {
+    const on = () => setAtTop(window.scrollY < 80)
+    on()
+    window.addEventListener("scroll", on, { passive: true })
+    return () => window.removeEventListener("scroll", on)
+  }, [])
 
   useEffect(() => {
     const el = headerRef.current
@@ -87,7 +95,16 @@ export default function JdawginatorPage() {
           </button>
         )}
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-6 md:px-8 md:pb-8">
+        <button
+          onClick={() => document.getElementById("read")?.scrollIntoView({ behavior: "smooth" })}
+          className={`absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-white/55 transition-opacity duration-500 hover:text-white ${atTop ? "opacity-100" : "pointer-events-none opacity-0"}`}
+          aria-label="Scroll to read the article"
+        >
+          Scroll to read
+          <svg viewBox="0 0 24 24" className="size-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </button>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-14 md:px-8 md:pb-14">
           <div className="mx-auto flex max-w-6xl flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-xl">
               <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">Writing · Live set</div>
@@ -96,10 +113,10 @@ export default function JdawginatorPage() {
             </div>
             <div className="w-full max-w-[500px] lg:w-[500px]">
               {engine && <Player engine={engine} title={SET.title} subtitle={SET.subtitle} />}
-              <div className="pointer-events-auto mt-2 flex flex-wrap items-center gap-1">
+              <div className="pointer-events-auto mt-2 grid grid-cols-3 gap-1 sm:grid-cols-6">
                 <button
                   onClick={() => { club.current?.setAuto(); setShot((s) => ({ ...s, auto: true })) }}
-                  className={`cursor-pointer border px-2.5 py-1 text-[11px] uppercase tracking-[0.12em] transition-colors ${shot.auto ? "border-white bg-white text-black" : "border-white/20 text-white/70 hover:border-white/50"}`}
+                  className={`cursor-pointer whitespace-nowrap border px-1 py-1 text-center text-[11px] uppercase tracking-[0.12em] transition-colors ${shot.auto ? "border-white bg-white text-black" : "border-white/20 text-white/70 hover:border-white/50"}`}
                 >
                   Auto cam
                 </button>
@@ -107,19 +124,20 @@ export default function JdawginatorPage() {
                   <button
                     key={s.name}
                     onClick={() => { club.current?.setShot(s.name); setShot({ shot: s.name, auto: false }) }}
-                    className={`cursor-pointer border px-2.5 py-1 text-[11px] uppercase tracking-[0.12em] transition-colors ${!shot.auto && shot.shot === s.name ? "border-white bg-white text-black" : "border-white/20 text-white/70 hover:border-white/50"}`}
+                    className={`cursor-pointer whitespace-nowrap border px-1 py-1 text-center text-[11px] uppercase tracking-[0.12em] transition-colors ${!shot.auto && shot.shot === s.name ? "border-white bg-white text-black" : "border-white/20 text-white/70 hover:border-white/50"}`}
                   >
                     {s.label}
                   </button>
                 ))}
-                <span className="ml-auto hidden text-[11px] text-white/45 md:inline">Click the room to fire CO₂</span>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <Article />
+      <div id="read" className="scroll-mt-10">
+        <Article />
+      </div>
 
       {engine && <MiniPlayer engine={engine} title={SET.title} visible={!headerVisible} />}
     </div>
