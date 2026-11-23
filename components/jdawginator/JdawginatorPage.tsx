@@ -87,13 +87,13 @@ export default function JdawginatorPage() {
         )}
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-6 md:px-8 md:pb-8">
-          <div className="mx-auto flex max-w-6xl flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div className="mx-auto flex max-w-6xl flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-xl">
               <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">Writing · Live set</div>
               <h1 className="mt-2 font-garnett text-5xl font-medium leading-[0.95] md:text-7xl">JDAWGINATOR</h1>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">A live recording, played back like a radio broadcast inside a voxel club that dances to it.</p>
             </div>
-            <div className="w-full md:w-[500px]">
+            <div className="w-full max-w-[500px] lg:w-[500px]">
               {engine && <Player engine={engine} title={SET.title} subtitle={SET.subtitle} />}
               <div className="pointer-events-auto mt-2 flex flex-wrap items-center gap-1">
                 <button
