@@ -518,15 +518,26 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
       ro.disconnect()
       canvas.removeEventListener("pointermove", onPointer)
       canvas.removeEventListener("click", onClick)
-      composer.dispose()
-      renderer.dispose()
+      const disposeMaterial = (mat: THREE.Material) => {
+        for (const v of Object.values(mat)) if (v instanceof THREE.Texture) v.dispose()
+        const uniforms = (mat as THREE.ShaderMaterial).uniforms
+        if (uniforms) for (const u of Object.values(uniforms)) if (u.value instanceof THREE.Texture) u.value.dispose()
+        mat.dispose()
+      }
       scene.traverse((o) => {
         const m = o as THREE.Mesh
-        if (m.geometry) m.geometry.dispose()
+        m.geometry?.dispose()
         const mat = m.material as THREE.Material | THREE.Material[] | undefined
-        if (Array.isArray(mat)) mat.forEach((x) => x.dispose())
-        else mat?.dispose()
+        if (Array.isArray(mat)) mat.forEach(disposeMaterial)
+        else if (mat) disposeMaterial(mat)
+        if (o instanceof THREE.InstancedMesh) o.dispose()
+        const light = o as THREE.SpotLight
+        if (light.isLight && light.shadow) light.shadow.dispose()
       })
+      if (scene.background instanceof THREE.Texture) scene.background.dispose()
+      for (const p of composer.passes) p.dispose()
+      composer.dispose()
+      renderer.dispose()
     },
   }
 }
