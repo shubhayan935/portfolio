@@ -30,6 +30,7 @@ export default function JdawginatorPage() {
     const e = new AudioEngine(SET.src)
     if (process.env.NODE_ENV !== "production") (window as unknown as { __engine: AudioEngine }).__engine = e
     setEngine(e)
+    return () => e.dispose()
   }, [])
   const club = useRef<Club | null>(null)
   const [shot, setShot] = useState<{ shot: ShotName; auto: boolean }>({ shot: "floor", auto: true })

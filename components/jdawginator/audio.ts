@@ -75,6 +75,15 @@ export class AudioEngine {
     this.el.pause()
   }
 
+  dispose() {
+    this.el.pause()
+    this.el.removeAttribute("src")
+    this.el.load()
+    this.ctx?.close()
+    this.ctx = null
+    this.analyser = null
+  }
+
   toggle() {
     return this.el.paused ? this.play() : Promise.resolve(this.pause())
   }
