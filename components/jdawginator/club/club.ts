@@ -485,9 +485,10 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
   }
   function frame(now: number) {
     raf = requestAnimationFrame(frame)
-    if (!active || !running || frozen) { last = now; return }
     const dt = Math.min(0.05, (now - last) / 1000)
     last = now
+    if (!running || frozen) return
+    if (!active) { engine.update(dt); return }
     tick(dt, true)
     frameAvg = frameAvg * 0.95 + dt * 1000 * 0.05
     if (time > 3 && frameAvg > 30 && dpr > 0.6) { dpr = Math.max(0.6, dpr - 0.15); renderer.setPixelRatio(dpr); resize(); frameAvg = 20 }
