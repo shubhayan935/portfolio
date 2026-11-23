@@ -103,6 +103,8 @@ export default function JdawginatorPage() {
           }}
           className={`absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-white/55 transition-opacity duration-500 hover:text-white ${atTop ? "opacity-100" : "pointer-events-none opacity-0"}`}
           aria-label="Scroll to read the article"
+          tabIndex={atTop ? 0 : -1}
+          aria-hidden={!atTop}
         >
           Scroll to read
           <svg viewBox="0 0 24 24" className="size-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
