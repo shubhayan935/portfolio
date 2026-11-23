@@ -172,6 +172,7 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
     width = Math.max(1, r.width)
     height = Math.max(1, r.height)
     renderer.setSize(width, height, false)
+    composer.setPixelRatio(renderer.getPixelRatio())
     composer.setSize(width, height)
     bloom.resolution.set(width / 2, height / 2)
     camera.aspect = width / height
