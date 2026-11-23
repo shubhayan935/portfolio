@@ -39,7 +39,7 @@ export function GET() {
     "## Writing",
     ...writingData.map(
       (writing) =>
-        `\n### [${writing.title}](${writing.url}) (${writing.date})\n${writing.description}`
+        `\n### [${writing.title}](${writing.url.startsWith("/") ? `https://shubhayan.dev${writing.url}` : writing.url}) (${writing.date})\n${writing.description}`
     ),
     "",
   ]

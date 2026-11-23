@@ -4,11 +4,11 @@ import { writingData } from "@/lib/data"
 
 export default function Writing() {
   return (
-    <section className="mb-16">
+    <section id="writing" className="mb-16 scroll-mt-32">
       <h2 className="text-2xl font-normal mb-4 font-garnett">Writing</h2>
       <div className="grid grid-cols-1">
         {writingData.map((writing) => (
-          <a key={writing.id} href={writing.url} target="_blank" rel="noopener noreferrer">
+          <a key={writing.id} href={writing.url} {...(writing.url.startsWith("/") ? {} : { target: "_blank", rel: "noopener noreferrer" })}>
             <Card className="h-full bg-transparent border-none overflow-hidden transition-all duration-300 cursor-pointer group gap-0 p-0 hover:underline">
               {/* Body */}
               <CardContent className="py-4 px-0 flex flex-col h-full">

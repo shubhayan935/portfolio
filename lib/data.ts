@@ -262,6 +262,13 @@ export const projectsData = [
 export const writingData = [
   {
     id: 0,
+    title: "JDAWGINATOR",
+    description: "A live DJ set inside an audio-reactive voxel club, plus notes on the set",
+    date: "22 Nov 2026",
+    url: "/jdawginator"
+  },
+  {
+    id: 1,
     title: "Integrations That Write Themselves",
     description: "Technical blog on some of my work at Ramp",
     date: "14 Aug 2026",
