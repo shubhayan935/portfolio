@@ -96,7 +96,11 @@ export default function JdawginatorPage() {
         )}
 
         <button
-          onClick={() => document.getElementById("read")?.scrollIntoView({ behavior: "smooth" })}
+          onClick={() => {
+            const el = document.getElementById("read")
+            el?.scrollIntoView({ behavior: "smooth" })
+            el?.focus({ preventScroll: true })
+          }}
           className={`absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-white/55 transition-opacity duration-500 hover:text-white ${atTop ? "opacity-100" : "pointer-events-none opacity-0"}`}
           aria-label="Scroll to read the article"
         >
@@ -135,7 +139,7 @@ export default function JdawginatorPage() {
         </div>
       </header>
 
-      <div id="read" className="scroll-mt-10">
+      <div id="read" tabIndex={-1} className="scroll-mt-10 outline-none">
         <Article />
       </div>
 
