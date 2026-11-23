@@ -183,12 +183,7 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
     const r = canvas.getBoundingClientRect()
     pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1)
   }
-  function onClick() {
-    co2.fire(1.1)
-    flash = Math.max(flash, opts.reducedMotion ? 0 : 0.25)
-  }
   canvas.addEventListener("pointermove", onPointer)
-  canvas.addEventListener("click", onClick)
 
   function updateCamera(dt: number, f: AudioFrame) {
     if (auto) {
@@ -260,6 +255,16 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
       flash = opts.reducedMotion ? 0.2 : 1
       co2.fire(2)
       if (firstDrop) { confetti.fire(); firstDrop = false }
+    }
+    const beatNum = Math.floor(f.beat)
+    if (playing && beatNum !== lastCo2Beat) {
+      lastCo2Beat = beatNum
+      const bar = Math.floor(beatNum / 4), inBar = ((beatNum % 4) + 4) % 4
+      if (sec === "peak") {
+        if (inBar === 0 && bar % 8 === 0) co2.fire(1.3)
+        else if (bar % 8 === 7 && inBar >= 2) co2.fire(0.22)
+        else if (inBar === 0 && bar % 4 === 0 && f.energy > 0.85) co2.fire(0.5)
+      } else if (sec === "groove" && inBar === 0 && bar % 16 === 0 && f.energy > 0.45) co2.fire(0.7)
     }
     const beatFrac = f.beat - Math.floor(f.beat)
     const quarter = (f.beat * 4) % 1
@@ -469,6 +474,7 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
     confetti.update(dt, time)
   }
 
+  let lastCo2Beat = -1
   let last = performance.now()
   let frozen = false
   let camOverride: { pos: THREE.Vector3; look: THREE.Vector3; fov: number } | null = null
@@ -505,7 +511,6 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
     setAuto,
     getShot: () => ({ shot, auto }),
     setActive(v: boolean) { active = v },
-    fire: onClick,
     debug: {
       freeze(v: boolean) { frozen = v },
       step(n: number, dt = 1 / 60, render = true) { for (let i = 0; i < n; i++) tick(dt, render && i === n - 1) },
@@ -518,7 +523,6 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
       cancelAnimationFrame(raf)
       ro.disconnect()
       canvas.removeEventListener("pointermove", onPointer)
-      canvas.removeEventListener("click", onClick)
       const disposeMaterial = (mat: THREE.Material) => {
         for (const v of Object.values(mat)) if (v instanceof THREE.Texture) v.dispose()
         const uniforms = (mat as THREE.ShaderMaterial).uniforms

@@ -27,5 +27,5 @@ export default function ClubCanvas({ engine, onReady }: { engine: AudioEngine; o
       club.dispose()
     }
   }, [engine, onReady])
-  return <canvas ref={ref} className="absolute inset-0 h-full w-full cursor-crosshair" aria-label="Interactive voxel club scene reacting to the DJ set" />
+  return <canvas ref={ref} className="absolute inset-0 h-full w-full" aria-label="Interactive voxel club scene reacting to the DJ set" />
 }
