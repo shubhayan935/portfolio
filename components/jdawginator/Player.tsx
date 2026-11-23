@@ -108,7 +108,7 @@ export function MiniPlayer({ engine, title, visible }: { engine: AudioEngine; ti
   const { playing, time, duration } = usePlayback(engine)
   const pct = duration ? (time / duration) * 100 : 0
   return (
-    <div className={`fixed bottom-5 left-1/2 z-50 w-[min(92vw,420px)] -translate-x-1/2 transition-all duration-500 ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"}`}>
+    <div inert={!visible} className={`fixed bottom-5 left-1/2 z-50 w-[min(92vw,420px)] -translate-x-1/2 transition-all duration-500 ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"}`}>
       <div className="relative flex items-center gap-3 border border-white/15 bg-black/70 px-3 py-2.5 backdrop-blur-xl">
         <button onClick={() => engine.toggle()} className="flex size-8 cursor-pointer items-center justify-center bg-white text-black" aria-label={playing ? "Pause" : "Play"}>
           <PlayIcon playing={playing} />
