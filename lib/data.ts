@@ -265,7 +265,7 @@ export const writingData = [
     title: "JDAWGINATOR",
     description: "A live DJ set inside an audio-reactive voxel club, plus notes on the set",
     date: "22 Nov 2026",
-    url: "/jdawginator"
+    url: "/writing/jdawginator"
   },
   {
     id: 1,
