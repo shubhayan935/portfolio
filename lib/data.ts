@@ -263,8 +263,8 @@ export const writingData = [
   {
     id: 0,
     title: "JDAWGINATOR",
-    description: "A live DJ set inside an audio-reactive voxel club, plus notes on the set",
-    date: "22 Nov 2026",
+    description: "Teaching an audio-native model to DJ with RL and a deterministic CDJ harness",
+    date: "27 Nov 2026",
     url: "/writing/jdawginator"
   },
   {
