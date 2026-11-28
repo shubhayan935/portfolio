@@ -60,32 +60,51 @@ export default function Article() {
 
         <article className="jd-prose min-w-0 max-w-[700px] border-t border-white/15 pt-4">
           <p className="jd-lede">
-            Raw model intelligence is no longer the bottleneck in AI DJing. The gap between a
-            convincing club transition and a muddy crossfade is domain-specific plumbing: a
-            deterministic CDJ harness, a composable control language, and a verifier cheap enough
-            to run inside a reinforcement learning loop.
+            In AI right now, raw model intelligence is rarely the bottleneck anymore—the remaining
+            gap in almost every domain is plumbing, harnesses, and verifiable feedback loops. I
+            recently got into DJing, and it turned out to be the cleanest testbed I could find for
+            that idea.
           </p>
 
           <p>
-            Hit play above and the set keeps running while you read. JDAWGINATOR is an audio-native
-            DJ system that listens to candidate cue moments from real tracks, plans a full
-            transition one-shot at <code>temp=0.0</code>, and hands that plan to a deterministic
-            signal-processing harness that executes it like a pair of Pioneer CDJ-3000s. No human
-            nudges the jog wheel, and no generative audio model ever hallucinates a single sample.
+            Over the last two years, frontier models went from acing math competitions to shipping
+            production software and running end-to-end research loops. The pattern behind every
+            domain that actually unlocked is the same: you stop asking the model to brute-force
+            everything from scratch, wrap it in a deterministic harness that encodes real domain
+            know-how, and give it a verifier cheap enough to hill-climb against with RL.
+          </p>
+
+          <p>
+            Learning to DJ made that split click immediately. A great club transition isn&apos;t
+            generating audio from noise, and it isn&apos;t dragging a single volume fader across two
+            tracks. It&apos;s two completely different skills stacked together: mechanical execution
+            (beatmatching, phrase grids, EQ crossovers, beat-exact loops) and musical taste
+            (hearing where a vocal clears, when to hold a hook, and where the drop should land).
+            Hit play above and the set keeps running while you read—JDAWGINATOR is my attempt to
+            build that exact split: an audio-native model that listens to candidate cue moments,
+            plans a full transition one-shot at <code>temp=0.0</code>, and hands that plan to a
+            deterministic DSP harness that executes it like a pair of{" "}
+            <a
+              href="https://www.pioneerdj.com/en/product/player/cdj-3000/black/overview/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pioneer CDJ-3000s
+            </a>
+            .
           </p>
 
           <p>
             Most attempts at automated DJing fail at one of two extremes. End-to-end audio
             generators blur lyrics, smear transients, and destroy the fidelity of the original
-            masters. On the other side, consumer auto-mixers rely on rigid fade curves that either
-            trainwreck phrasing or overlap two competing drum kits until the low end collapses into
-            mud. A club DJ doesn&apos;t generate music from scratch, and they don&apos;t drag a
-            single volume fader from left to right. They listen for phrase boundaries, separate
-            frequency bands, loop hooks to buy tension, and swap kicks on the downbeat.
+            masters. Consumer auto-mixers swing the other way, leaning on rigid fade curves that
+            either trainwreck phrasing or stack two competing drum kits until the low end collapses
+            into mud. No human nudges the jog wheel here, and no generative audio model ever
+            hallucinates a single sample.
           </p>
 
           <p>
-            The rest of this post walks through how we split that problem in two, how we built the
+            The rest of this post walks through how I split the problem in two, how I built the
             deterministic CDJ harness and psychoacoustic verifier from first principles, how
             audio-native GRPO trained the planner to use real DJ techniques on its own, and how
             JDAWGINATOR scores against Apple Music AutoMix and Spotify.
@@ -105,7 +124,7 @@ export default function Article() {
             What genuinely requires a model is <strong>ears and taste</strong>: listening to two
             records, hearing whether a vocal hook clashes with an incoming synth line, picking the
             right bar-1 exit and entry points, and choosing how aggressively to strip stems or ride
-            a loop into the drop. So we split the stack cleanly around three typed primitives:
+            a loop into the drop. So I split the stack cleanly around three typed primitives:
           </p>
 
           <ul>
@@ -133,7 +152,7 @@ export default function Article() {
           <h2 id="harness">Deep Dive: Building the Deterministic CDJ Harness</h2>
 
           <p>
-            Every major jump in mix quality came from fixing a concrete failure we heard in the
+            Every major jump in mix quality came from fixing a concrete failure I heard in the
             rendered audio and encoding the fix directly into the harness. Four pieces do the heavy
             lifting.
           </p>
@@ -141,8 +160,8 @@ export default function Article() {
           <h3>1. Novelty-Based Bar-1 Phrase-Phase Detection</h3>
 
           <p>
-            Early prototypes sliced tracks on naive 64-beat multiples starting at beat 0. On real
-            electronic records that almost never works: intros have pickup bars, DJ edits start
+            My earliest prototypes sliced tracks on naive 64-beat multiples starting at beat 0. On
+            real electronic records that almost never works: intros have pickup bars, DJ edits start
             mid-phrase, and radio masters have silent lead-ins. Cueing on beat 64 when the true
             8-bar phrase starts on beat 33 guarantees that Deck B&apos;s drop lands halfway through
             Deck A&apos;s verse.
@@ -170,15 +189,15 @@ export default function Article() {
 
           <p>
             During rendering, Deck B is time-stretched to Deck A&apos;s tempo via WSOLA, loudness-matched
-            in LUFS, and then phase-locked directly in the kick band. We apply a 4th-order
+            in LUFS, and then phase-locked directly in the kick band. I apply a 4th-order
             Butterworth low-pass filter at <code>160 Hz</code> to both decks&apos; overlap windows
             and cross-correlate their onset envelopes over <code>±0.5</code> beats to snap Deck B&apos;s
             sample offset directly onto Deck A&apos;s kick transient.
           </p>
 
           <p>
-            One subtle bug here taught us how tightly coupled the harness primitives are. Once we
-            added beat-exact Deck A loops with <code>16→8→4</code> tightening rolls at the end of a
+            One subtle bug here showed how tightly coupled the harness primitives are. Once I added
+            beat-exact Deck A loops with <code>16→8→4</code> tightening rolls at the end of a
             transition, the phase-lock step started locking Deck B against the accelerated loop roll
             instead of the underlying 4/4 groove—pulling the entire transition off-beat. The fix was
             keeping an un-tightened copy of the looped Deck A overlap exclusively for kick-window
@@ -189,17 +208,16 @@ export default function Article() {
           <h3>3. Four-Stem Separation and Progressive 3-Band Drum Morphing</h3>
 
           <p>
-            Our first renderer used standard 3-band DJ EQ crossfades on full stereo tracks. Even
-            when perfectly beat-locked, two house records playing full drum stems simultaneously
-            sound congested: claps double up, snare tails smear, and competing kicks fight for
-            headroom.
+            My first renderer used standard 3-band DJ EQ crossfades on full stereo tracks. Even when
+            perfectly beat-locked, two house records playing full drum stems simultaneously sound
+            congested: claps double up, snare tails smear, and competing kicks fight for headroom.
           </p>
 
           <p>
-            We solved this by running Demucs (<code>htdemucs</code>) on the overlap window to split
+            I solved this by running Demucs (<code>htdemucs</code>) on the overlap window to split
             each deck into <code>drums</code>, <code>bass</code>, <code>vocals</code>, and{" "}
-            <code>other</code>, and then splitting the drum stem itself into three Linkwitz-style
-            frequency bands: <code>drums_low (&lt;180 Hz)</code> for kick punch,{" "}
+            <code>other</code>, and then splitting the drum stem itself into three frequency bands:{" "}
+            <code>drums_low (&lt;180 Hz)</code> for kick punch,{" "}
             <code>drums_mid (180–4000 Hz)</code> for claps and snares, and{" "}
             <code>drums_high (&gt;4000 Hz)</code> for hi-hats and shakers. A transition no longer
             fades drums linearly—it morphs them top-down the way a club DJ works a mixer: Deck B&apos;s
@@ -213,7 +231,7 @@ export default function Article() {
             A monotonic crossfader caps how musical an automated DJ can ever sound. To let the
             model execute real club phrasing—holding an outgoing vocal over an incoming groove,
             looping an 8-bar hook, tightening it into a build, and washing it out with a beat-synced
-            delay—we built a composable beat-indexed DSL (<code>CDJProgram</code>).
+            delay—I built a composable beat-indexed DSL (<code>CDJProgram</code>).
           </p>
 
           <p>
@@ -246,7 +264,7 @@ export default function Article() {
 
           <ul>
             <li>
-              <strong>Beat Drift Across Sliding Windows:</strong> We measure <code>&lt;160 Hz</code>{" "}
+              <strong>Beat Drift Across Sliding Windows:</strong> I measure <code>&lt;160 Hz</code>{" "}
               kick lag both globally and across sliding 2.5-second windows (taking{" "}
               <code>max(global, p75_window)</code>) so linear tempo drift can never hide behind a
               clean midpoint lock. Hard gate: <code>≤ 45.0 ms</code>.
@@ -265,9 +283,9 @@ export default function Article() {
               <code>≤ 0.25</code>.
             </li>
             <li>
-              <strong>Psychoacoustic Mix Critic:</strong> On top of the technical gates, we score
-              every overlap with vectorized Sethares / Plomp-Levelt sensory roughness over the top
-              spectral peaks (<code>60–6000 Hz</code>), a 12×12 semitone cross-chroma dissonance
+              <strong>Psychoacoustic Mix Critic:</strong> On top of the technical gates, every
+              overlap is scored with vectorized Sethares / Plomp-Levelt sensory roughness over the
+              top spectral peaks (<code>60–6000 Hz</code>), a 12×12 semitone cross-chroma dissonance
               matrix (penalizing minor-second and tritone clashes), peak dual-drum overlap duration,
               and Bark-band masking.
             </li>
@@ -284,7 +302,7 @@ export default function Article() {
           <h2 id="post-training">Post-Training: From Blind Crossfades to Audio-Native GRPO</h2>
 
           <p>
-            We built the training pipeline in stages so we could separate track-selection taste from
+            I built the training pipeline in stages to separate track-selection taste from
             audio-grounded execution, keeping strict leakage hygiene throughout:
           </p>
 
@@ -302,9 +320,9 @@ export default function Article() {
           </ul>
 
           <p>
-            Text-only track cards got us surprisingly far on BPM and Camelot compatibility, but a
-            model that can&apos;t actually hear the audio is guessing when it places cue points and
-            vocal entries. In Phase 5, we switched to audio-native multimodal GRPO on{" "}
+            Text-only track cards got surprisingly far on BPM and Camelot compatibility, but a model
+            that can&apos;t actually hear the audio is guessing when it places cue points and vocal
+            entries. In Phase 5, I switched to audio-native multimodal GRPO on{" "}
             <code>thinkingmachines/Inkling-Small</code> via Tinker LoRA. For each candidate Deck A
             exit and Deck B entry section, the harness slices a compact 16 kHz mono WAV snippet and
             passes it directly into the prompt as a <code>DmelChunk</code> audio span, preserved
@@ -330,15 +348,15 @@ export default function Article() {
           <p>
             Internal reward curves prove a policy fits its own training loop; they don&apos;t prove
             it beats what listeners already have on their phones. To measure where JDAWGINATOR
-            actually stands, we score <strong>JDAWGINATOR</strong>,{" "}
+            actually stands, I score <strong>JDAWGINATOR</strong>,{" "}
             <strong>Apple Music AutoMix</strong>, and <strong>Spotify</strong> through the exact
             same single-mix DSP and psychoacoustic evaluator on final stereo output—no internal-stem
-            privilege for our own renderer.
+            privilege for my own renderer.
           </p>
 
           <ExternalBenchmarkTable />
 
-          <h2 id="failures">What Still Breaks (and What We&apos;re Building for v5)</h2>
+          <h2 id="failures">What Still Breaks (and What I&apos;m Building for v5)</h2>
 
           <p>
             The quickest way to tell whether an ML write-up is real is whether it shows you where
@@ -358,7 +376,7 @@ export default function Article() {
               phrasing and vocal cadence before deciding.
             </li>
             <li>
-              <strong>Large BPM gaps:</strong> On our <code>128 → 142 BPM</code> stress test (
+              <strong>Large BPM gaps:</strong> On my <code>128 → 142 BPM</code> stress test (
               <em>My Place → I Need You</em>), pure RL achieved <code>0.0 ms</code> beat drift by
               time-stretching Track B down by <code>-10%</code>—technically beat-locked, musically
               sluggish. Above roughly <code>±6%</code> tempo delta, a real DJ stops beatmatching and
@@ -366,7 +384,7 @@ export default function Article() {
               bridge.
             </li>
             <li>
-              <strong>Live-set exact inversion:</strong> Our initial plan to distill live tech-house
+              <strong>Live-set exact inversion:</strong> My initial plan to distill live tech-house
               sets by linearly inverting each transition against studio masters broke immediately on
               modern club sets—half the tracklist in a real set consists of unreleased IDs, private
               edits, and live mashups with no studio reference. The cleaner path is set-only style
