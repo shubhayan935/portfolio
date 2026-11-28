@@ -41,8 +41,8 @@ export default function JdawginatorPage() {
   const [mobile, setMobile] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)")
-    const on = () => setMobile(mq.matches)
+    const mq = window.matchMedia("(min-width: 48rem)")
+    const on = () => setMobile(!mq.matches)
     on()
     mq.addEventListener("change", on)
     return () => mq.removeEventListener("change", on)
