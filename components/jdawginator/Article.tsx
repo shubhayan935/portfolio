@@ -58,7 +58,7 @@ export default function Article() {
           </nav>
         </aside>
 
-        <article className="jd-prose max-w-[700px] border-t border-white/15 pt-4">
+        <article className="jd-prose min-w-0 max-w-[700px] border-t border-white/15 pt-4">
           <p className="jd-lede">
             Raw model intelligence is no longer the bottleneck in AI DJing. The gap between a
             convincing club transition and a muddy crossfade is domain-specific plumbing: a
