@@ -51,6 +51,7 @@ export class AudioEngine {
 
   constructor(src: string) {
     this.el = new Audio()
+    this.el.volume = 0.9
     this.el.src = src
     this.el.preload = "metadata"
     this.el.crossOrigin = "anonymous"

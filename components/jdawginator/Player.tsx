@@ -64,7 +64,7 @@ function Meter({ engine, bars = 24, className = "" }: { engine: AudioEngine; bar
 
 export function Player({ engine, title, subtitle }: { engine: AudioEngine; title: string; subtitle: string }) {
   const { playing, time, duration } = usePlayback(engine)
-  const [vol, setVol] = useState(0.9)
+  const [vol, setVol] = useState(() => engine.el.volume)
   useEffect(() => { engine.el.volume = vol }, [engine, vol])
   const pct = duration ? (time / duration) * 100 : 0
   return (

@@ -127,7 +127,7 @@ export default function JdawginatorPage() {
               <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">Teaching an audio-native model to DJ with RL and a deterministic CDJ harness—played live inside an audio-reactive voxel club.</p>
             </div>
             <div className="w-full max-w-[500px] lg:w-[500px]">
-              {engine && <Player engine={engine} title={SET.title} subtitle={SET.subtitle} />}
+              {engine && mobile === false && <Player engine={engine} title={SET.title} subtitle={SET.subtitle} />}
               <div className="pointer-events-auto mt-2 grid grid-cols-3 gap-1 sm:grid-cols-6">
                 <button
                   onClick={() => { club.current?.setAuto(); setShot((s) => ({ ...s, auto: true })) }}
