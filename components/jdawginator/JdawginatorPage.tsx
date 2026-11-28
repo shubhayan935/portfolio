@@ -38,7 +38,6 @@ export default function JdawginatorPage() {
   const [atTop, setAtTop] = useState(true)
   const [playing, setPlaying] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
-  const heroRef = useRef<HTMLDivElement>(null)
   const [mobile, setMobile] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -71,12 +70,12 @@ export default function JdawginatorPage() {
   }, [])
 
   useEffect(() => {
-    const el = mobile ? heroRef.current : headerRef.current
-    if (!el || mobile === null) return
+    const el = headerRef.current
+    if (!el) return
     const io = new IntersectionObserver(([e]) => setHeaderVisible(e.intersectionRatio > 0.15), { threshold: [0, 0.15, 0.5] })
     io.observe(el)
     return () => io.disconnect()
-  }, [mobile, engine])
+  }, [])
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -151,7 +150,7 @@ export default function JdawginatorPage() {
         </div>
       </header>
 
-      <div ref={heroRef} className="px-5 pt-24 md:hidden">
+      <div className="px-5 pt-24 md:hidden">
         <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">Writing · Research</div>
         <h1 className="mt-2 font-garnett text-[clamp(2.25rem,11.5vw,3rem)] font-medium leading-[0.95]">JDAWGINATOR</h1>
         <p className="mt-3 text-sm leading-relaxed text-white/70">Teaching an audio-native model to DJ with RL and a deterministic CDJ harness.</p>
@@ -162,7 +161,7 @@ export default function JdawginatorPage() {
         <Article />
       </div>
 
-      {engine && <MiniPlayer engine={engine} title={SET.title} visible={!headerVisible} />}
+      {engine && mobile === false && <MiniPlayer engine={engine} title={SET.title} visible={!headerVisible} />}
     </div>
   )
 }
