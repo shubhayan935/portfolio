@@ -26,6 +26,9 @@ importers:
       framer-motion:
         specifier: ^12.23.12
         version: 12.23.12(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      katex:
+        specifier: 0.16.11
+        version: 0.16.11
       lucide-react:
         specifier: ^0.536.0
         version: 0.536.0(react@19.2.3)
@@ -54,6 +57,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.12
+      '@types/katex':
+        specifier: ^0.16.8
+        version: 0.16.8
       '@types/node':
         specifier: ^20
         version: 20.19.11
@@ -576,6 +582,9 @@ packages:
   '@tweenjs/tween.js@23.1.3':
     resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
 
+  '@types/katex@0.16.8':
+    resolution: {integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==}
+
   '@types/node@20.19.11':
     resolution: {integrity: sha512-uug3FEEGv0r+jrecvUUpbY8lLisvIjg6AAic6a2bSP5OEOLeJsDSnvhCDov7ipFFMXS3orMpzlmi0ZcuGkBbow==}
 
@@ -707,6 +716,10 @@ packages:
   commander@14.0.0:
     resolution: {integrity: sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA==}
     engines: {node: '>=20'}
+
+  commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
 
   content-disposition@1.0.0:
     resolution: {integrity: sha512-Au9nRL8VNUut/XSzbQA38+M78dzP4D+eqg3gfJHMIHHYa3bg067xj1KxMUWj+VULbiZMowKngFFbKczUrNJ1mg==}
@@ -1014,6 +1027,10 @@ packages:
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
+    hasBin: true
+
+  katex@0.16.11:
+    resolution: {integrity: sha512-RQrI8rlHY92OLf3rho/Ts8i/XvjgguEjOkO1BEXcU3N8BqPpSzBNwV/G0Ukr+P/l3ivvJUE/Fa/CwbS6HesGNQ==}
     hasBin: true
 
   lightningcss-darwin-arm64@1.30.1:
@@ -1976,6 +1993,8 @@ snapshots:
 
   '@tweenjs/tween.js@23.1.3': {}
 
+  '@types/katex@0.16.8': {}
+
   '@types/node@20.19.11':
     dependencies:
       undici-types: 6.21.0
@@ -2093,6 +2112,8 @@ snapshots:
   clsx@2.1.1: {}
 
   commander@14.0.0: {}
+
+  commander@8.3.0: {}
 
   content-disposition@1.0.0:
     dependencies:
@@ -2401,6 +2422,10 @@ snapshots:
   json-schema-traverse@0.4.1: {}
 
   json5@2.2.3: {}
+
+  katex@0.16.11:
+    dependencies:
+      commander: 8.3.0
 
   lightningcss-darwin-arm64@1.30.1:
     optional: true

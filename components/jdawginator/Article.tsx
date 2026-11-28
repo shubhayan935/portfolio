@@ -4,7 +4,9 @@ import {
   HeldOutResultsTable,
   StemAutomationDiagram,
 } from "./ArticleFigures"
+import "katex/dist/katex.min.css"
 import ArticleContents from "./ArticleContents"
+import M from "./Math"
 
 export const ARTICLE = {
   date: "27 Nov 2026",
@@ -65,7 +67,7 @@ export default function Article() {
             (hearing where a vocal clears, when to hold a hook, and where the drop should land).
             Hit play above and the set keeps running while you read—JDAWGINATOR is my attempt to
             build that exact split: an audio-native model that listens to candidate cue moments,
-            plans a full transition one-shot at <code>temp=0.0</code>, and hands that plan to a
+            plans a full transition one-shot at temperature 0, and hands that plan to a
             deterministic DSP harness that executes it like a pair of{" "}
             <a
               href="https://www.pioneerdj.com/en/product/player/cdj-3000/black/overview/"
@@ -126,7 +128,7 @@ export default function Article() {
             <li>
               <strong><code>TransitionQAReport</code></strong> — the deterministic technical and
               psychoacoustic audit of the rendered stereo mix, returning hard defect flags and a
-              bounded <code>[0, 1]</code> reward for RL.
+              bounded <M>{"[0, 1]"}</M> reward for RL.
             </li>
           </ul>
 
@@ -153,9 +155,9 @@ export default function Article() {
           <p>
             Instead of trusting beat 0, the analyzer computes per-beat broadband RMS and sub-200 Hz
             low-band energy, then runs a 16-beat bidirectional novelty filter across the entire
-            track (<code>d_rms + 1.5 * d_low</code>, weighting bass drops 1.5× heavier than
-            mid-range shifts). It evaluates every candidate phase offset <code>p ∈ [0, 31]</code>{" "}
-            by summing novelty on the 32-beat lattice <code>p, p+32, p+64, …</code> and locks the
+            track (<M>{String.raw`d_{\mathrm{rms}} + 1.5\,d_{\mathrm{low}}`}</M>, weighting bass drops 1.5× heavier than
+            mid-range shifts). It evaluates every candidate phase offset <M>{String.raw`p \in [0, 31]`}</M>{" "}
+            by summing novelty on the 32-beat lattice <M>{String.raw`p,\ p+32,\ p+64,\ \ldots`}</M> and locks the
             song&apos;s phrase grid to the highest-scoring bar-1 phase. From there it segments the
             track into 32- or 64-beat sections—splitting 64-beat windows in half whenever midpoint
             novelty clears the 82nd percentile, and merging trailing tails shorter than 16 beats so
@@ -173,14 +175,14 @@ export default function Article() {
           <p>
             During rendering, Deck B is time-stretched to Deck A&apos;s tempo via WSOLA, loudness-matched
             in LUFS, and then phase-locked directly in the kick band. I apply a 4th-order
-            Butterworth low-pass filter at <code>160 Hz</code> to both decks&apos; overlap windows
-            and cross-correlate their onset envelopes over <code>±0.5</code> beats to snap Deck B&apos;s
+            Butterworth low-pass filter at 160 Hz to both decks&apos; overlap windows
+            and cross-correlate their onset envelopes over ±0.5 beats to snap Deck B&apos;s
             sample offset directly onto Deck A&apos;s kick transient.
           </p>
 
           <p>
             One subtle bug here showed how tightly coupled the harness primitives are. Once I added
-            beat-exact Deck A loops with <code>16→8→4</code> tightening rolls at the end of a
+            beat-exact Deck A loops with 16 → 8 → 4 tightening rolls at the end of a
             transition, the phase-lock step started locking Deck B against the accelerated loop roll
             instead of the underlying 4/4 groove—pulling the entire transition off-beat. The fix was
             keeping an un-tightened copy of the looped Deck A overlap exclusively for kick-window
@@ -200,9 +202,9 @@ export default function Article() {
             I solved this by running Demucs (<code>htdemucs</code>) on the overlap window to split
             each deck into <code>drums</code>, <code>bass</code>, <code>vocals</code>, and{" "}
             <code>other</code>, and then splitting the drum stem itself into three frequency bands:{" "}
-            <code>drums_low (&lt;180 Hz)</code> for kick punch,{" "}
-            <code>drums_mid (180–4000 Hz)</code> for claps and snares, and{" "}
-            <code>drums_high (&gt;4000 Hz)</code> for hi-hats and shakers. A transition no longer
+            <code>drums_low</code> (below 180 Hz) for kick punch,{" "}
+            <code>drums_mid</code> (180–4000 Hz) for claps and snares, and{" "}
+            <code>drums_high</code> (above 4000 Hz) for hi-hats and shakers. A transition no longer
             fades drums linearly—it morphs them top-down the way a club DJ works a mixer: Deck B&apos;s
             hi-hats glide in first, claps crossfade across the middle bars, and the sub-180 Hz kick
             and bass swap cleanly on a single quantized downbeat.
@@ -223,7 +225,7 @@ export default function Article() {
             <code>bass</code>, <code>vocals</code>, <code>other</code>). Keyframes are evaluated
             with cosine smoothstep interpolation for equal-power feel and zero zipper noise. Decks
             also accept beat-exact <code>DeckLoop</code> blocks (8 ms splice crossfades, optional{" "}
-            <code>16→8→4</code> tightening) and beat-windowed <code>StemFX</code> (
+            16 → 8 → 4 tightening) and beat-windowed <code>StemFX</code> (
             <code>hpf_sweep</code>, <code>lpf_sweep</code>, <code>echo_out</code>,{" "}
             <code>reverb_wash</code>, <code>vinyl_brake</code>) targeted at individual stems rather
             than only the master bus.
@@ -247,37 +249,37 @@ export default function Article() {
 
           <ul>
             <li>
-              <strong>Beat Drift Across Sliding Windows:</strong> I measure <code>&lt;160 Hz</code>{" "}
-              kick lag both globally and across sliding 2.5-second windows (taking{" "}
-              <code>max(global, p75_window)</code>) so linear tempo drift can never hide behind a
-              clean midpoint lock. Hard gate: <code>≤ 45.0 ms</code>.
+              <strong>Beat Drift Across Sliding Windows:</strong> I measure sub-160 Hz kick
+              lag both globally and across sliding 2.5-second windows (taking{" "}
+              <M>{String.raw`\max(\Delta_{\mathrm{global}},\, \Delta^{\mathrm{p75}}_{\mathrm{window}})`}</M>) so linear tempo drift can never hide behind a
+              clean midpoint lock. Hard gate: <M>{String.raw`\Delta \le 45.0\ \mathrm{ms}`}</M>.
             </li>
             <li>
               <strong>Loudness &amp; Step Continuity:</strong> Integrated LUFS across pre, overlap,
-              and post segments must stay within <code>3.5 dB</code>, and no 0.5-second RMS step
-              inside the overlap can jump more than <code>4.5 dB</code>. Digital peaks are gated at{" "}
-              <code>≤ -0.15 dBFS</code> with fewer than 8 clipped samples.
+              and post segments must stay within 3.5 dB, and no 0.5-second RMS step
+              inside the overlap can jump more than 4.5 dB. Digital peaks are gated at{" "}
+              −0.15 dBFS with fewer than 8 clipped samples.
             </li>
             <li>
-              <strong>Frequency &amp; Vocal Collision:</strong> Low-band (<code>&lt;250 Hz</code>)
-              overlap energy cannot exceed the louder solo track by more than <code>1.6 dB</code>{" "}
-              (catching double-bass mud); onset flux ratio is capped at <code>1.38×</code> (catching
-              dual-drum clash); and simultaneous vocal activity at 0.5 s resolution is gated at{" "}
-              <code>≤ 0.25</code>.
+              <strong>Frequency &amp; Vocal Collision:</strong> Low-band (below 250 Hz)
+              overlap energy cannot exceed the louder solo track by more than 1.6 dB{" "}
+              (catching double-bass mud); onset flux ratio is capped at 1.38× (catching
+              dual-drum clash); and simultaneous vocal activity at 0.5 s resolution is capped at{" "}
+              0.25.
             </li>
             <li>
               <strong>Psychoacoustic Mix Critic:</strong> On top of the technical gates, every
               overlap is scored with vectorized Sethares / Plomp-Levelt sensory roughness over the
-              top spectral peaks (<code>60–6000 Hz</code>), a 12×12 semitone cross-chroma dissonance
+              top spectral peaks (60–6000 Hz), a 12×12 semitone cross-chroma dissonance
               matrix (penalizing minor-second and tritone clashes), peak dual-drum overlap duration,
               and Bark-band masking.
             </li>
           </ul>
 
           <p>
-            Every defect applies an explicit penalty to a bounded <code>[0, 1]</code> verifiable
-            reward—<code>-0.35</code> for off-beat drift, <code>-0.25</code> for vocal clash or
-            clipping, <code>-0.20</code> for bass clash, LUFS jump, sudden cut, harmonic clash, or
+            Every defect applies an explicit penalty to a bounded <M>{"[0, 1]"}</M> verifiable
+            reward—−0.35 for off-beat drift, −0.25 for vocal clash or
+            clipping, −0.20 for bass clash, LUFS jump, sudden cut, harmonic clash, or
             dual-drum overlap. The policy can&apos;t average its way past a bad mix; a single
             trainwreck tanks the rollout.
           </p>
@@ -354,15 +356,15 @@ export default function Article() {
               using it everywhere. A great DJ varies their palette—quick drop swaps, long 64-beat
               hypnotic blends, acapella bridges, filter sweeps—depending on the room and the
               records. Fixing this requires balanced, diverse DSL SFT prior to audio-conditional
-              GRPO (<code>v5</code>) and widening the model&apos;s listening clips from{" "}
-              <code>3s</code> to <code>8s</code> (a full 4-bar phrase) so it can actually hear
+              GRPO (v5) and widening the model&apos;s listening clips from{" "}
+              3 s to 8 s (a full 4-bar phrase) so it can actually hear
               phrasing and vocal cadence before deciding.
             </li>
             <li>
-              <strong>Large BPM gaps:</strong> On my <code>128 → 142 BPM</code> stress test (
-              <em>My Place → I Need You</em>), pure RL achieved <code>0.0 ms</code> beat drift by
-              time-stretching Track B down by <code>-10%</code>—technically beat-locked, musically
-              sluggish. Above roughly <code>±6%</code> tempo delta, a real DJ stops beatmatching and
+              <strong>Large BPM gaps:</strong> On my 128 → 142 BPM stress test (
+              <em>My Place → I Need You</em>), pure RL achieved 0.0 ms beat drift by
+              time-stretching Track B down by −10%—technically beat-locked, musically
+              sluggish. Above roughly ±6% tempo delta, a real DJ stops beatmatching and
               uses a tempo-jump primitive: vinyl brake, echo-out into a cold drop, or a halftime
               bridge.
             </li>
