@@ -39,13 +39,12 @@ function Figure({
 
 function Tabs<T extends string>({ value, options, onChange }: { value: T; options: { id: T; label: string }[]; onChange: (v: T) => void }) {
   return (
-    <div role="tablist" className="flex border border-white/15 p-0.5">
+    <div role="group" className="flex border border-white/15 p-0.5">
       {options.map((o) => (
         <button
           key={o.id}
           type="button"
-          role="tab"
-          aria-selected={value === o.id}
+          aria-pressed={value === o.id}
           onClick={() => onChange(o.id)}
           className={`cursor-pointer px-2.5 py-1 text-[12px] transition-colors ${value === o.id ? "bg-white/12 text-white" : "text-white/50 hover:text-white/80"}`}
         >
