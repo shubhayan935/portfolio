@@ -40,7 +40,7 @@ export function GET() {
     ...writingData.flatMap((writing) => [
       `# ${writing.title} (${writing.date})`,
       `#   ${writing.description}`,
-      `#   URL: ${writing.url}`,
+      `#   URL: ${writing.url.startsWith("/") ? `https://shubhayan.dev${writing.url}` : writing.url}`,
       "#",
     ]),
     "",

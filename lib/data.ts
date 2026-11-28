@@ -262,6 +262,13 @@ export const projectsData = [
 export const writingData = [
   {
     id: 0,
+    title: "JDAWGINATOR",
+    description: "Teaching an audio-native model to DJ with RL and a deterministic CDJ harness",
+    date: "27 Nov 2026",
+    url: "/writing/jdawginator"
+  },
+  {
+    id: 1,
     title: "Integrations That Write Themselves",
     description: "Technical blog on some of my work at Ramp",
     date: "14 Aug 2026",

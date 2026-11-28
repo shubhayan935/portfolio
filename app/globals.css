@@ -225,3 +225,30 @@
 @media (prefers-reduced-motion: reduce) {
   .voxel-drop { animation: none; }
 }
+
+/* JDAWGINATOR article */
+.jd-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, rgba(255,255,255,0.9) var(--pct, 0%), rgba(255,255,255,0.18) var(--pct, 0%));
+  outline: none;
+}
+.jd-range::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 0; }
+.jd-range::-moz-range-thumb { width: 10px; height: 10px; background: #fff; border: none; border-radius: 0; }
+.jd-prose { color: rgba(255,255,255,0.78); font-size: 17px; line-height: 1.7; text-align: left; }
+.jd-prose p { margin: 0 0 1.25em; }
+.jd-prose h2 { font-family: var(--font-garnett), system-ui, sans-serif; font-weight: 400; font-size: 26px; color: #fff; margin: 2.4em 0 0.65em; letter-spacing: -0.01em; scroll-margin-top: 5rem; }
+.jd-prose h3 { font-family: var(--font-garnett), system-ui, sans-serif; font-weight: 400; font-size: 19px; color: rgba(255,255,255,0.94); margin: 1.75em 0 0.5em; letter-spacing: -0.01em; }
+.jd-prose strong { color: #fff; font-weight: 600; }
+.jd-prose a { color: #fff; text-decoration: underline; text-decoration-color: rgba(255,255,255,0.35); text-underline-offset: 3px; transition: text-decoration-color 150ms; }
+.jd-prose a:hover { text-decoration-color: #fff; }
+.jd-prose ul { list-style: disc; padding-left: 1.3em; margin: 0 0 1.25em; }
+.jd-prose ol { list-style: decimal; padding-left: 1.3em; margin: 0 0 1.25em; }
+.jd-prose li { margin: 0.45em 0; }
+.jd-prose pre, .jd-prose code { font-family: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace; }
+.jd-prose code { font-size: 0.84em; color: rgba(255,255,255,0.92); }
+.jd-prose .katex { font-size: 1em; color: #fff; }
+.jd-prose .katex * { font-family: var(--font-instrument-sans), system-ui, sans-serif !important; }
+.jd-prose .katex .mathnormal { font-style: italic; }
+.jd-prose pre code { font-size: inherit; color: inherit; }
+.jd-prose blockquote { border-left: 2px solid rgba(255,255,255,0.4); padding-left: 1.1em; margin: 1.4em 0; color: rgba(255,255,255,0.88); }
