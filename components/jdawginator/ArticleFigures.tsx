@@ -1,131 +1,152 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
+
+const INK = "#ffffff"
+const MUTED = "rgba(255,255,255,0.55)"
+const FAINT = "rgba(255,255,255,0.38)"
+const LINE = "rgba(255,255,255,0.32)"
+const GRID = "rgba(255,255,255,0.07)"
+const TINT = "rgba(255,255,255,0.035)"
+const ACCENT = "#8fb4ff"
+
+function Figure({
+  label,
+  title,
+  aside,
+  caption,
+  children,
+}: {
+  label: string
+  title: string
+  aside?: ReactNode
+  caption: ReactNode
+  children: ReactNode
+}) {
+  return (
+    <figure className="my-10">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <div className="text-[13px] font-medium text-white/90">{title}</div>
+        {aside}
+      </div>
+      {children}
+      <figcaption className="mt-3 text-[13px] leading-relaxed text-white/50">
+        <span className="font-medium text-white/80">{label}.</span> {caption}
+      </figcaption>
+    </figure>
+  )
+}
+
+function Tabs<T extends string>({ value, options, onChange }: { value: T; options: { id: T; label: string }[]; onChange: (v: T) => void }) {
+  return (
+    <div role="tablist" className="flex border border-white/15 p-0.5">
+      {options.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          role="tab"
+          aria-selected={value === o.id}
+          onClick={() => onChange(o.id)}
+          className={`cursor-pointer px-2.5 py-1 text-[12px] transition-colors ${value === o.id ? "bg-white/12 text-white" : "text-white/50 hover:text-white/80"}`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function Swatch({ dashed, color, label }: { dashed?: boolean; color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5 text-[12px] text-white/55">
+      <svg width="16" height="6" aria-hidden="true">
+        <line x1="0" y1="3" x2="16" y2="3" stroke={color} strokeWidth="1.75" strokeDasharray={dashed ? "3 2" : undefined} />
+      </svg>
+      {label}
+    </span>
+  )
+}
+
+function Node({ x, y, w, h, title, lines, accent }: { x: number; y: number; w: number; h: number; title: string; lines: string[]; accent?: boolean }) {
+  return (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx="3" fill="#000" stroke={accent ? ACCENT : LINE} />
+      <text x={x + 12} y={y + 21} fill={INK} fontSize="12.5" fontWeight="500">{title}</text>
+      {lines.map((l, i) => (
+        <text key={l} x={x + 12} y={y + 38 + i * 15} fill={accent && i === lines.length - 1 ? ACCENT : MUTED} fontSize="11">{l}</text>
+      ))}
+    </g>
+  )
+}
+
+function Region({ y, h, title, note }: { y: number; h: number; title: string; note: string }) {
+  return (
+    <g>
+      <rect x="16" y={y} width="720" height={h} rx="4" fill={TINT} />
+      <text x="32" y={y + 22} fill="rgba(255,255,255,0.75)" fontSize="11.5" fontWeight="500">{title}</text>
+      <text x="720" y={y + 22} textAnchor="end" fill={FAINT} fontSize="11">{note}</text>
+    </g>
+  )
+}
 
 export function ArchitectureDiagram() {
   return (
-    <figure className="my-8 border border-white/15 bg-[#070709]">
-      <div className="flex items-center justify-between border-b border-white/15 px-4 py-2.5">
-        <span className="text-[11px] uppercase tracking-[0.16em] text-white/60">
-          Figure 1 · System Architecture
-        </span>
-        <span className="text-[11px] uppercase tracking-[0.12em] text-white/40">
-          Planner (Probabilistic) / Decks (Deterministic)
-        </span>
-      </div>
-      <div className="overflow-x-auto p-4 md:p-6">
+    <Figure
+      label="Figure 1"
+      title="System architecture"
+      caption={
+        <>
+          The model never synthesizes audio samples. It hears 16 kHz cue snippets alongside structural section cards and emits a structured <code>CDJProgram</code>; the harness executes the signal processing deterministically and scores the rendered stereo mix.
+        </>
+      }
+    >
+      <div className="overflow-x-auto">
         <svg
-          viewBox="0 0 760 390"
+          viewBox="0 0 776 404"
           className="h-auto w-full min-w-[600px]"
           role="img"
           aria-label="JDAWGINATOR architecture separating audio-native planning from the deterministic CDJ harness and verifiable QA loop"
         >
           <defs>
-            <marker id="jd-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(255,255,255,0.55)" />
+            <marker id="jd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.5)" />
             </marker>
-            <marker id="jd-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+            <marker id="jd-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={ACCENT} />
             </marker>
           </defs>
 
-          {/* Band 1: MIR + Multimodal Planner */}
-          <rect x="16" y="16" width="728" height="106" fill="#0c0d11" stroke="rgba(255,255,255,0.16)" />
-          <text x="28" y="36" fill="rgba(255,255,255,0.45)" fontSize="10" letterSpacing="1.6">
-            LAYER 1 · PERCEPTION &amp; PLANNING (MODEL = EARS + TASTE)
-          </text>
+          <Region y={4} h={120} title="Perception & planning" note="probabilistic · the model's ears and taste" />
+          <Node x={32} y={42} w={190} h={68} title="MIR & phrase analyzer" lines={["Beat grid · bar-1 phrase phase", "6-label TrackSection timeline"]} />
+          <Node x={246} y={42} w={206} h={68} title="Audio-native prompt" lines={["16 kHz WAV cue clips (DmelChunk)", "Deck A exit + Deck B entry cards"]} />
+          <Node x={476} y={42} w={244} h={68} title="Inkling-Small · Tinker LoRA" lines={["One-shot JSON mix plan at T = 0", "cues · stem timing · loops · exit FX"]} accent />
+          <line x1="222" y1="76" x2="244" y2="76" stroke="rgba(255,255,255,0.5)" markerEnd="url(#jd-arrow)" />
+          <line x1="452" y1="76" x2="474" y2="76" stroke="rgba(255,255,255,0.5)" markerEnd="url(#jd-arrow)" />
 
-          <rect x="28" y="48" width="196" height="60" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="40" y="68" fill="#ffffff" fontSize="12" fontWeight="600">MIR &amp; Phrase Analyzer</text>
-          <text x="40" y="84" fill="rgba(255,255,255,0.62)" fontSize="10.5">Beat grid · bar-1 phrase phase</text>
-          <text x="40" y="98" fill="rgba(255,255,255,0.62)" fontSize="10.5">6-label TrackSection timeline</text>
+          <line x1="598" y1="110" x2="598" y2="148" stroke="rgba(255,255,255,0.5)" markerEnd="url(#jd-arrow)" />
+          <text x="606" y="136" fill={MUTED} fontSize="10.5" fontFamily="ui-monospace, Menlo, monospace">CDJProgram</text>
 
-          <line x1="224" y1="78" x2="254" y2="78" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
+          <Region y={150} h={124} title="Deterministic CDJ harness" note="no generated audio" />
+          <Node x={32} y={188} w={156} h={70} title="1 · Sync & lock" lines={["WSOLA tempo stretch", "Sub-160 Hz kick phase lock"]} />
+          <Node x={208} y={188} w={166} h={70} title="2 · Stem separation" lines={["Demucs htdemucs, 4 stems", "3-band drum split"]} />
+          <Node x={394} y={188} w={160} h={70} title="3 · DSL compiler" lines={["6-stem cosine keyframes", "Loops 16 → 8 → 4 · StemFX"]} />
+          <Node x={574} y={188} w={146} h={70} title="4 · Master render" lines={["44.1 kHz stereo WAV", "LUFS norm + limiter"]} />
+          {[188, 374, 554].map((x) => (
+            <line key={x} x1={x} y1="223" x2={x + 18} y2="223" stroke="rgba(255,255,255,0.5)" markerEnd="url(#jd-arrow)" />
+          ))}
 
-          <rect x="256" y="48" width="214" height="60" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="268" y="68" fill="#ffffff" fontSize="12" fontWeight="600">Audio-Native Prompt</text>
-          <text x="268" y="84" fill="rgba(255,255,255,0.62)" fontSize="10.5">16 kHz WAV cue clips (DmelChunk)</text>
-          <text x="268" y="98" fill="rgba(255,255,255,0.62)" fontSize="10.5">Deck A exit + Deck B entry cards</text>
+          <line x1="376" y1="274" x2="376" y2="302" stroke="rgba(255,255,255,0.5)" markerEnd="url(#jd-arrow)" />
+          <text x="384" y="292" fill={MUTED} fontSize="10.5">rendered stereo mix</text>
 
-          <line x1="470" y1="78" x2="500" y2="78" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
+          <Region y={304} h={96} title="Verifiable reward" note="GRPO training loop" />
+          <Node x={32} y={338} w={334} h={50} title="Technical DSP verifier" lines={["Beat drift · phrase lock · LUFS jump · bass and vocal clash"]} />
+          <Node x={386} y={338} w={334} h={50} title="Psychoacoustic mix critic" lines={["Plomp-Levelt roughness · cross-chroma clash · Bark masking"]} />
 
-          <rect x="502" y="48" width="228" height="60" fill="#10151c" stroke="#60a5fa" strokeWidth="1.2" />
-          <text x="514" y="68" fill="#ffffff" fontSize="12" fontWeight="600">Inkling-Small (Tinker LoRA)</text>
-          <text x="514" y="84" fill="rgba(255,255,255,0.75)" fontSize="10.5">One-shot JSON mix plan (temp=0.0)</text>
-          <text x="514" y="98" fill="#93c5fd" fontSize="10.5">cues · stem timing · loops · exit FX</text>
-
-          {/* Arrow down from Planner to Harness */}
-          <line x1="616" y1="108" x2="616" y2="146" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
-          <text x="626" y="133" fill="rgba(255,255,255,0.55)" fontSize="10">CDJProgram JSON</text>
-
-          {/* Band 2: Deterministic CDJ Harness */}
-          <rect x="16" y="148" width="728" height="114" fill="#0c0d11" stroke="rgba(255,255,255,0.16)" />
-          <text x="28" y="168" fill="rgba(255,255,255,0.45)" fontSize="10" letterSpacing="1.6">
-            LAYER 2 · DETERMINISTIC CDJ HARNESS (ZERO HALLUCINATED AUDIO)
-          </text>
-
-          <rect x="28" y="182" width="162" height="66" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="40" y="202" fill="#ffffff" fontSize="12" fontWeight="600">1. Sync &amp; Lock</text>
-          <text x="40" y="218" fill="rgba(255,255,255,0.62)" fontSize="10.5">WSOLA tempo stretch</text>
-          <text x="40" y="232" fill="rgba(255,255,255,0.62)" fontSize="10.5">&lt;160 Hz kick phase lock</text>
-
-          <line x1="190" y1="215" x2="212" y2="215" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
-
-          <rect x="214" y="182" width="174" height="66" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="226" y="202" fill="#ffffff" fontSize="12" fontWeight="600">2. Stem Separation</text>
-          <text x="226" y="218" fill="rgba(255,255,255,0.62)" fontSize="10.5">Demucs htdemucs (4-stem)</text>
-          <text x="226" y="232" fill="rgba(255,255,255,0.62)" fontSize="10.5">3-band drum split (180/4k Hz)</text>
-
-          <line x1="388" y1="215" x2="410" y2="215" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
-
-          <rect x="412" y="182" width="164" height="66" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="424" y="202" fill="#ffffff" fontSize="12" fontWeight="600">3. CDJ DSL Compiler</text>
-          <text x="424" y="218" fill="rgba(255,255,255,0.62)" fontSize="10.5">6-stem cosine keyframes</text>
-          <text x="424" y="232" fill="rgba(255,255,255,0.62)" fontSize="10.5">Loops (16→8→4) + StemFX</text>
-
-          <line x1="576" y1="215" x2="598" y2="215" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
-
-          <rect x="600" y="182" width="130" height="66" fill="#050507" stroke="rgba(255,255,255,0.45)" />
-          <text x="612" y="202" fill="#ffffff" fontSize="12" fontWeight="600">4. Master Render</text>
-          <text x="612" y="218" fill="rgba(255,255,255,0.62)" fontSize="10.5">44.1 kHz stereo WAV</text>
-          <text x="612" y="232" fill="rgba(255,255,255,0.62)" fontSize="10.5">LUFS norm + limiter</text>
-
-          {/* Arrow down from Harness to Verifier */}
-          <line x1="665" y1="248" x2="665" y2="286" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" markerEnd="url(#jd-arrow)" />
-
-          {/* Band 3: Verification & RL Loop */}
-          <rect x="16" y="288" width="728" height="86" fill="#0c0d11" stroke="rgba(255,255,255,0.16)" />
-          <text x="28" y="308" fill="rgba(255,255,255,0.45)" fontSize="10" letterSpacing="1.6">
-            LAYER 3 · VERIFIABLE REWARD ENGINE (GRPO TRAINING LOOP)
-          </text>
-
-          <rect x="28" y="318" width="332" height="44" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="40" y="336" fill="#ffffff" fontSize="11.5" fontWeight="600">Technical DSP Verifier</text>
-          <text x="40" y="352" fill="rgba(255,255,255,0.62)" fontSize="10">beat drift · phrase lock · LUFS jump · &lt;250 Hz excess · vocal/drum clash</text>
-
-          <rect x="376" y="318" width="354" height="44" fill="#050507" stroke="rgba(255,255,255,0.28)" />
-          <text x="388" y="336" fill="#ffffff" fontSize="11.5" fontWeight="600">Psychoacoustic Mix Critic</text>
-          <text x="388" y="352" fill="rgba(255,255,255,0.62)" fontSize="10">Plomp-Levelt roughness · 12×12 cross-chroma clash · Bark masking</text>
-
-          {/* Feedback loop arrow back up to Inkling-Small */}
-          <path
-            d="M 194 318 L 194 274 L 540 274 L 540 110"
-            fill="none"
-            stroke="#34d399"
-            strokeWidth="1.2"
-            strokeDasharray="4 3"
-            markerEnd="url(#jd-arrow-accent)"
-          />
-          <rect x="280" y="264" width="184" height="18" fill="#070709" />
-          <text x="288" y="276" fill="#34d399" fontSize="10" letterSpacing="0.6">
-            GRPO REWARD (0..1) → LORA UPDATE
-          </text>
+          <path d="M 720 363 L 758 363 Q 764 363 764 357 L 764 82 Q 764 76 758 76 L 722 76" fill="none" stroke={ACCENT} strokeWidth="1.25" strokeDasharray="4 3" markerEnd="url(#jd-arrow-accent)" />
+          <text x="756" y="292" textAnchor="end" fill={ACCENT} fontSize="10.5">reward ∈ [0, 1] → LoRA update</text>
         </svg>
       </div>
-      <figcaption className="border-t border-white/15 px-4 py-2.5 text-[12px] leading-relaxed text-white/55">
-        The model never synthesizes audio samples. It hears 16 kHz cue snippets alongside structural section cards and emits a structured <code className="text-white/80">CDJProgram</code>; the harness executes the signal processing deterministically and scores the rendered stereo mix.
-      </figcaption>
-    </figure>
+    </Figure>
   )
 }
 
@@ -146,342 +167,251 @@ const SAMPLE_PLAN_JSON = `{
   "exit_fx": "hpf_echo_out"
 }`
 
+const X0 = 132
+const X1 = 736
+const bx = (b: number) => X0 + (b / 32) * (X1 - X0)
+const ease = (t: number) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, t)))
+const ramp = (from: number, to: number, a: number, b: number) => (beat: number) => from + (to - from) * ease((beat - a) / (b - a))
+const seq = (...segs: [number, (b: number) => number][]) => (beat: number) => {
+  let f = segs[0][1]
+  for (const [start, g] of segs) if (beat >= start) f = g
+  return f(beat)
+}
+
+type Curve = { fn: (b: number) => number; deck: "a" | "b" | "v" }
+const ROWS: { label: string; sub: string; curves: Curve[] }[] = [
+  { label: "Hi-hats", sub: "above 4 kHz", curves: [{ deck: "a", fn: ramp(1, 0, 0, 14.4) }, { deck: "b", fn: ramp(0, 1, 0, 14.4) }] },
+  { label: "Claps & snares", sub: "180 Hz – 4 kHz", curves: [{ deck: "a", fn: ramp(1, 0, 8, 20) }, { deck: "b", fn: ramp(0, 1, 8, 20) }] },
+  { label: "Kick & bass", sub: "below 180 Hz", curves: [{ deck: "a", fn: (b) => (b < 16 ? 1 : 0) }, { deck: "b", fn: (b) => (b < 16 ? 0 : 1) }] },
+  {
+    label: "Harmony & vocals",
+    sub: "never overlapping",
+    curves: [
+      { deck: "a", fn: seq([0, ramp(1, 0.6, 16, 24)], [24, ramp(0.6, 0, 24, 32)]) },
+      { deck: "b", fn: ramp(0, 1, 8, 18.6) },
+      { deck: "v", fn: ramp(0, 0.85, 17.6, 25) },
+    ],
+  },
+]
+const ROW_TOP = 26
+const ROW_H = 44
+const ROW_GAP = 22
+
+function curvePath(fn: (b: number) => number, top: number) {
+  const pts: string[] = []
+  for (let i = 0; i <= 256; i++) {
+    const beat = (i / 256) * 32
+    pts.push(`${bx(beat).toFixed(1)},${(top + ROW_H * (1 - fn(beat))).toFixed(1)}`)
+  }
+  return pts
+}
+
 export function StemAutomationDiagram() {
   const [tab, setTab] = useState<"curves" | "json">("curves")
+  const h = ROW_TOP + ROWS.length * (ROW_H + ROW_GAP) + 14
 
   return (
-    <figure className="my-8 border border-white/15 bg-[#070709]">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 px-4 py-2.5">
-        <span className="text-[11px] uppercase tracking-[0.16em] text-white/60">
-          Figure 2 · Compiled 32-Beat CDJProgram
-        </span>
-        <div className="flex gap-1">
-          <button
-            type="button"
-            onClick={() => setTab("curves")}
-            className={`cursor-pointer border px-2.5 py-0.5 text-[11px] uppercase tracking-[0.12em] transition-colors ${
-              tab === "curves"
-                ? "border-white bg-white text-black"
-                : "border-white/20 text-white/65 hover:border-white/50"
-            }`}
-          >
-            Stem Curves
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("json")}
-            className={`cursor-pointer border px-2.5 py-0.5 text-[11px] uppercase tracking-[0.12em] transition-colors ${
-              tab === "json"
-                ? "border-white bg-white text-black"
-                : "border-white/20 text-white/65 hover:border-white/50"
-            }`}
-          >
-            Model JSON
-          </button>
-        </div>
-      </div>
-
+    <Figure
+      label="Figure 2"
+      title="A compiled 32-beat CDJProgram"
+      aside={<Tabs value={tab} onChange={setTab} options={[{ id: "curves", label: "Stem curves" }, { id: "json", label: "Model output" }]} />}
+      caption={
+        <>
+          Instead of fading two full-spectrum tracks on top of each other, the harness compiles the model&apos;s JSON into cosine-eased per-stem keyframes: hats glide first, claps morph across bars 3–5, and the sub-180 Hz kick and bass swap on the beat-16 downbeat while Deck A loops and exits through a beat-synced high-pass echo.
+        </>
+      }
+    >
       {tab === "curves" ? (
-        <div className="overflow-x-auto p-4 md:p-6">
-          <svg
-            viewBox="0 0 760 320"
-            className="h-auto w-full min-w-[600px]"
-            role="img"
-            aria-label="32-beat CDJ DSL stem automation diagram showing progressive 3-band drum morph, downbeat kick and bass swap, 8-beat loop tightening, and HPF echo-out"
-          >
-            {/* Background grid: beats 0, 8, 16, 24, 32 */}
-            {[
-              { b: 0, x: 110 },
-              { b: 8, x: 265 },
-              { b: 16, x: 420 },
-              { b: 24, x: 575 },
-              { b: 32, x: 730 },
-            ].map((g) => (
-              <g key={g.b}>
-                <line
-                  x1={g.x}
-                  y1={28}
-                  x2={g.x}
-                  y2={278}
-                  stroke={g.b === 16 ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.12)"}
-                  strokeDasharray={g.b === 16 ? "3 3" : undefined}
-                />
-                <text x={g.x} y={18} textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10">
-                  Beat {g.b}
-                </text>
-              </g>
-            ))}
+        <>
+          <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1">
+            <Swatch color={FAINT} label="Deck A, outgoing" />
+            <Swatch color={INK} label="Deck B, incoming" />
+            <Swatch color={INK} dashed label="Deck B vocals" />
+          </div>
+          <div className="overflow-x-auto">
+            <svg
+              viewBox={`0 0 760 ${h + 18}`}
+              className="h-auto w-full min-w-[600px]"
+              role="img"
+              aria-label="32-beat stem automation: hats and claps morph progressively, kick and bass swap on beat 16, and Deck A loops 8 to 4 beats before a high-pass echo-out"
+            >
+              <rect x={bx(24)} y={6} width={bx(32) - bx(24)} height={h - 6} fill={TINT} />
+              <text x={bx(28)} y={18} textAnchor="middle" fill={MUTED} fontSize="10.5">loop 8 → 4 · HPF echo-out</text>
 
-            {/* Highlight zones */}
-            {/* Loop tighten 24 -> 32 */}
-            <rect x="575" y="28" width="155" height="250" fill="rgba(251,191,36,0.06)" />
-            <text x="652" y="42" textAnchor="middle" fill="#fbbf24" fontSize="9.5" letterSpacing="0.8">
-              LOOP 8→4 + HPF ECHO-OUT
-            </text>
+              {Array.from({ length: 33 }, (_, b) => b)
+                .filter((b) => b % 4 === 0)
+                .map((b) => (
+                  <g key={b}>
+                    <line x1={bx(b)} y1={ROW_TOP - 4} x2={bx(b)} y2={h} stroke={b % 8 === 0 ? "rgba(255,255,255,0.1)" : GRID} />
+                    {b % 8 === 0 && (
+                      <text x={bx(b)} y={h + 14} textAnchor="middle" fill={FAINT} fontSize="10.5">{b}</text>
+                    )}
+                  </g>
+                ))}
+              <text x={X0 - 12} y={h + 14} textAnchor="end" fill={FAINT} fontSize="10.5">beat</text>
 
-            {/* Downbeat swap label */}
-            <rect x="358" y="30" width="124" height="16" fill="#070709" />
-            <text x="420" y="42" textAnchor="middle" fill="#ffffff" fontSize="9.5" letterSpacing="0.8">
-              DOWNBEAT SWAP (0.50)
-            </text>
+              {ROWS.map((row, r) => {
+                const top = ROW_TOP + r * (ROW_H + ROW_GAP)
+                return (
+                  <g key={row.label}>
+                    <text x="16" y={top + 18} fill="rgba(255,255,255,0.85)" fontSize="12">{row.label}</text>
+                    <text x="16" y={top + 33} fill={FAINT} fontSize="10.5">{row.sub}</text>
+                    <line x1={X0} y1={top + ROW_H} x2={X1} y2={top + ROW_H} stroke="rgba(255,255,255,0.16)" />
+                    {row.curves.map((c, i) => {
+                      const pts = curvePath(c.fn, top)
+                      return (
+                        <g key={i}>
+                          {c.deck === "b" && (
+                            <polygon points={`${X0},${top + ROW_H} ${pts.join(" ")} ${X1},${top + ROW_H}`} fill="rgba(255,255,255,0.06)" />
+                          )}
+                          <polyline
+                            points={pts.join(" ")}
+                            fill="none"
+                            stroke={c.deck === "a" ? FAINT : INK}
+                            strokeWidth={c.deck === "a" ? 1.5 : 1.75}
+                            strokeDasharray={c.deck === "v" ? "4 3" : undefined}
+                            strokeLinejoin="round"
+                          />
+                        </g>
+                      )
+                    })}
+                  </g>
+                )
+              })}
 
-            {/* Row 1: Hi-hats (>4 kHz) */}
-            <text x="16" y="76" fill="rgba(255,255,255,0.8)" fontSize="11">Hats &gt;4 kHz</text>
-            <text x="16" y="90" fill="rgba(255,255,255,0.4)" fontSize="9.5">glide 0→14b</text>
-            <line x1="110" y1="96" x2="730" y2="96" stroke="rgba(255,255,255,0.08)" />
-            {/* Deck A hats: 1.0 -> 0.0 by beat 14.4 (x=389) */}
-            <path d="M 110 62 C 210 62, 290 94, 389 94 L 730 94" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="1.8" />
-            {/* Deck B hats: 0.0 -> 1.0 by beat 14.4 */}
-            <path d="M 110 94 C 210 94, 290 62, 389 62 L 730 62" fill="none" stroke="#60a5fa" strokeWidth="2" />
-
-            {/* Row 2: Claps/Snares (180-4k Hz) */}
-            <text x="16" y="128" fill="rgba(255,255,255,0.8)" fontSize="11">Claps 180–4k</text>
-            <text x="16" y="142" fill="rgba(255,255,255,0.4)" fontSize="9.5">morph 8→20b</text>
-            <line x1="110" y1="148" x2="730" y2="148" stroke="rgba(255,255,255,0.08)" />
-            <path d="M 110 114 L 265 114 C 340 114, 410 146, 497 146 L 730 146" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="1.8" />
-            <path d="M 110 146 L 265 146 C 340 146, 410 114, 497 114 L 730 114" fill="none" stroke="#60a5fa" strokeWidth="2" />
-
-            {/* Row 3: Kick (<180 Hz) + Bass */}
-            <text x="16" y="180" fill="rgba(255,255,255,0.8)" fontSize="11">Kick + Bass</text>
-            <text x="16" y="194" fill="rgba(255,255,255,0.4)" fontSize="9.5">swap @ beat 16</text>
-            <line x1="110" y1="200" x2="730" y2="200" stroke="rgba(255,255,255,0.08)" />
-            <path d="M 110 166 L 408 166 C 414 166, 418 198, 424 198 L 730 198" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="1.8" />
-            <path d="M 110 198 L 416 198 C 422 198, 426 166, 432 166 L 730 166" fill="none" stroke="#34d399" strokeWidth="2.2" />
-
-            {/* Row 4: Harmony + Vocals */}
-            <text x="16" y="232" fill="rgba(255,255,255,0.8)" fontSize="11">Harmony / Vox</text>
-            <text x="16" y="246" fill="rgba(255,255,255,0.4)" fontSize="9.5">non-overlapping</text>
-            <line x1="110" y1="252" x2="730" y2="252" stroke="rgba(255,255,255,0.08)" />
-            {/* Deck A harmony/loop held then HPF-echoed out */}
-            <path d="M 110 218 L 420 218 C 495 218, 535 234, 575 234 C 630 234, 675 250, 730 250" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="1.8" />
-            {/* Deck B harmony enters beat 8, vocals beat 17.6 */}
-            <path d="M 110 250 L 265 250 C 340 250, 390 218, 458 218 L 730 218" fill="none" stroke="#60a5fa" strokeWidth="2" />
-            <path d="M 110 250 L 451 250 C 500 250, 535 224, 585 224 L 730 224" fill="none" stroke="#c084fc" strokeWidth="1.8" strokeDasharray="4 2" />
-
-            {/* Legend */}
-            <g transform="translate(110, 294)">
-              <line x1="0" y1="6" x2="18" y2="6" stroke="rgba(255,255,255,0.55)" strokeWidth="2" />
-              <text x="24" y="10" fill="rgba(255,255,255,0.65)" fontSize="10.5">Deck A (outgoing)</text>
-
-              <line x1="145" y1="6" x2="163" y2="6" stroke="#60a5fa" strokeWidth="2" />
-              <text x="169" y="10" fill="rgba(255,255,255,0.65)" fontSize="10.5">Deck B (hats/claps/harmony)</text>
-
-              <line x1="342" y1="6" x2="360" y2="6" stroke="#34d399" strokeWidth="2.2" />
-              <text x="366" y="10" fill="rgba(255,255,255,0.65)" fontSize="10.5">Deck B kick + bass</text>
-
-              <line x1="485" y1="6" x2="503" y2="6" stroke="#c084fc" strokeWidth="1.8" strokeDasharray="4 2" />
-              <text x="509" y="10" fill="rgba(255,255,255,0.65)" fontSize="10.5">Deck B vocals</text>
-            </g>
-          </svg>
-        </div>
+              <line x1={bx(16)} y1={ROW_TOP - 4} x2={bx(16)} y2={h} stroke={ACCENT} strokeDasharray="3 3" />
+              <text x={bx(16) + 6} y={18} fill={ACCENT} fontSize="10.5">bass swap on the downbeat</text>
+            </svg>
+          </div>
+        </>
       ) : (
-        <pre className="overflow-x-auto p-4 text-[13px] leading-relaxed text-white/85 md:p-6">
+        <pre className="overflow-x-auto bg-white/[0.04] p-4 text-[12.5px] leading-relaxed text-white/80 md:p-5">
           <code>{SAMPLE_PLAN_JSON}</code>
         </pre>
       )}
-      <figcaption className="border-t border-white/15 px-4 py-2.5 text-[12px] leading-relaxed text-white/55">
-        Instead of fading two full-spectrum tracks on top of each other, the harness compiles the model&apos;s JSON into cosine-eased per-stem keyframes: hats glide first, claps morph across bars 3–5, and the &lt;180 Hz kick + bass swap instantaneously on the beat-16 downbeat while Deck A loops and exits through a beat-synced high-pass echo.
-      </figcaption>
-    </figure>
+    </Figure>
   )
 }
 
-type BenchmarkRow = {
-  metric: string
-  target: string
-  jdawginator: string
-  appleAutoMix: string
-  spotify: string
-}
+const TH = "whitespace-nowrap pb-2.5 pr-4 text-[12px] font-normal text-white/45 last:pr-0"
+const TD = "py-2.5 pr-4 align-top last:pr-0"
+
+type BenchmarkRow = { metric: string; target: string; jdawginator: string; appleAutoMix: string; spotify: string }
 
 const EXTERNAL_BENCHMARK_ROWS: BenchmarkRow[] = [
-  {
-    metric: "Overall Composite Score (0–100)",
-    target: "Higher is better",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Technical QA Pass Rate",
-    target: "0 defect flags",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Beat Drift (<160 Hz kick)",
-    target: "≤ 45.0 ms",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Loudness Continuity (LUFS Jump)",
-    target: "≤ 3.5 dB",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Low-Band Bass Clash (<250 Hz)",
-    target: "≤ 1.6 dB",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Dual-Drum Transient Ratio",
-    target: "≤ 1.38×",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Vocal-on-Vocal Clash Ratio",
-    target: "≤ 0.25",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Phrase-Grid Alignment",
-    target: "Bar-1 aligned",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
-  {
-    metric: "Plomp-Levelt Roughness Excess",
-    target: "Lower is better",
-    jdawginator: "TBD",
-    appleAutoMix: "TBD",
-    spotify: "TBD",
-  },
+  { metric: "Overall composite score (0–100)", target: "higher is better", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Technical QA pass rate", target: "0 defect flags", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Beat drift, sub-160 Hz kick", target: "≤ 45.0 ms", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Loudness continuity, LUFS jump", target: "≤ 3.5 dB", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Low-band bass clash, below 250 Hz", target: "≤ 1.6 dB", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Dual-drum transient ratio", target: "≤ 1.38×", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Vocal-on-vocal clash ratio", target: "≤ 0.25", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Phrase-grid alignment", target: "bar-1 aligned", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
+  { metric: "Plomp-Levelt roughness excess", target: "lower is better", jdawginator: "TBD", appleAutoMix: "TBD", spotify: "TBD" },
 ]
+
+function Cell({ v, ours }: { v: string; ours?: boolean }) {
+  if (v === "TBD") return <span className="text-white/25">—</span>
+  return <span className={ours ? "font-medium text-white" : "text-white/65"}>{v}</span>
+}
 
 export function ExternalBenchmarkTable() {
   return (
-    <figure className="my-8 border border-white/15 bg-[#070709]">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 px-4 py-2.5">
-        <span className="text-[11px] uppercase tracking-[0.16em] text-white/60">
-          Table 1 · JDAWGINATOR vs. Apple Music AutoMix vs. Spotify
-        </span>
-        <span className="border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-white/55">
-          Scores pending final run
-        </span>
-      </div>
+    <Figure
+      label="Table 2"
+      title="JDAWGINATOR vs. Apple Music AutoMix vs. Spotify"
+      aside={<span className="text-[12px] text-white/40">Scores pending final run</span>}
+      caption={
+        <>
+          Every system is scored by the same single-mix DSP and psychoacoustic evaluator on final stereo output, with no internal-stem privilege given to JDAWGINATOR. Empty cells will be filled once the final benchmark sweep finishes.
+        </>
+      }
+    >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[540px] border-collapse text-left text-[13.5px]">
+        <table className="w-full min-w-[540px] border-collapse text-left text-[14px] tabular-nums">
           <thead>
-            <tr className="border-b border-white/15 text-[11px] uppercase tracking-[0.12em] text-white/50">
-              <th className="px-4 py-3 font-medium">Metric</th>
-              <th className="px-4 py-3 font-medium">QA Gate</th>
-              <th className="px-4 py-3 font-medium text-white">JDAWGINATOR</th>
-              <th className="px-4 py-3 font-medium">Apple Music AutoMix</th>
-              <th className="px-4 py-3 font-medium">Spotify</th>
+            <tr className="border-b border-white/20">
+              <th className={TH}>Metric</th>
+              <th className={TH}>QA gate</th>
+              <th className={`${TH} text-right !text-white/90`}>JDAWGINATOR</th>
+              <th className={`${TH} text-right`}>Apple AutoMix</th>
+              <th className={`${TH} text-right`}>Spotify</th>
             </tr>
           </thead>
           <tbody>
-            {EXTERNAL_BENCHMARK_ROWS.map((row, idx) => (
-              <tr
-                key={row.metric}
-                className={
-                  idx === 0
-                    ? "border-b border-white/20 bg-white/[0.04] font-medium text-white"
-                    : "border-b border-white/10 text-white/75 last:border-b-0"
-                }
-              >
-                <td className="px-4 py-2.5 text-white/90">{row.metric}</td>
-                <td className="px-4 py-2.5 text-white/45">{row.target}</td>
-                <td className="px-4 py-2.5 font-medium text-white/90">{row.jdawginator}</td>
-                <td className="px-4 py-2.5 text-white/60">{row.appleAutoMix}</td>
-                <td className="px-4 py-2.5 text-white/60">{row.spotify}</td>
+            {EXTERNAL_BENCHMARK_ROWS.map((row, i) => (
+              <tr key={row.metric} className="border-b border-white/[0.08]">
+                <td className={`${TD} ${i === 0 ? "font-medium text-white" : "text-white/85"}`}>{row.metric}</td>
+                <td className={`${TD} whitespace-nowrap text-white/45`}>{row.target}</td>
+                <td className={`${TD} bg-white/[0.03] text-right`}><Cell v={row.jdawginator} ours /></td>
+                <td className={`${TD} text-right`}><Cell v={row.appleAutoMix} /></td>
+                <td className={`${TD} text-right`}><Cell v={row.spotify} /></td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <figcaption className="border-t border-white/15 px-4 py-2.5 text-[12px] leading-relaxed text-white/55">
-        Every system is scored by the exact same single-mix DSP &amp; psychoacoustic evaluator on final stereo output, with no internal-stem privilege given to JDAWGINATOR. Placeholder cells will be populated once the final benchmark sweep finishes.
-      </figcaption>
-    </figure>
+    </Figure>
   )
 }
 
+const DRIFT_GATE = 45
 const HELD_OUT_PAIRS = [
-  {
-    pair: "Thinking About You → Nanana",
-    bpm: "128 → 128",
-    drift: "0.0 ms",
-    lufs: "0.43 dB",
-    score: "0.800 QA",
-    notes: "Bar-1 cues (b481 → b33), 8-beat loop tighten + HPF echo-out",
-  },
-  {
-    pair: "Thinking About You → World Hold On (FISHER Rework)",
-    bpm: "128 → 126",
-    drift: "11.6 ms",
-    lufs: "0.35 dB",
-    score: "0.780 QA",
-    notes: "Phrase-aligned rework entry, clean <180 Hz bass swap",
-  },
-  {
-    pair: "Nanana → Thinking About You",
-    bpm: "128 → 128",
-    drift: "11.6 ms",
-    lufs: "0.54 dB",
-    score: "0.942 reward",
-    notes: "Zero vocal clash, smooth progressive 3-band drum morph",
-  },
-  {
-    pair: "My Place → I Need You (Stress Test)",
-    bpm: "128 → 142",
-    drift: "0.0 ms",
-    lufs: "0.64 dB",
-    score: "Stretch −10%",
-    notes: "Failure mode: beat-locked by over-stretching B instead of tempo-jump cut",
-  },
+  { pair: "Thinking About You → Nanana", bpm: "128 → 128", drift: 0, lufs: "0.43", score: "0.800", unit: "QA", notes: "Bar-1 cues (b481 → b33), 8-beat loop tighten + HPF echo-out" },
+  { pair: "Thinking About You → World Hold On (FISHER Rework)", bpm: "128 → 126", drift: 11.6, lufs: "0.35", score: "0.780", unit: "QA", notes: "Phrase-aligned rework entry, clean sub-180 Hz bass swap" },
+  { pair: "Nanana → Thinking About You", bpm: "128 → 128", drift: 11.6, lufs: "0.54", score: "0.942", unit: "reward", notes: "Zero vocal clash, smooth progressive 3-band drum morph" },
+  { pair: "My Place → I Need You", bpm: "128 → 142", drift: 0, lufs: "0.64", score: "−10%", unit: "stretch", notes: "Failure: beat-locked by over-stretching B instead of a tempo-jump cut", fail: true },
 ]
 
 export function HeldOutResultsTable() {
   return (
-    <figure className="my-8 border border-white/15 bg-[#070709]">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 px-4 py-2.5">
-        <span className="text-[11px] uppercase tracking-[0.16em] text-white/60">
-          Table 2 · Held-Out Commercial Pairs (base-dj-v4, temp=0.0, 44.1 kHz)
-        </span>
-      </div>
+    <Figure
+      label="Table 1"
+      title="Held-out commercial pairs"
+      aside={<span className="text-[12px] text-white/40">base-dj-v4 · T = 0 · 44.1 kHz</span>}
+      caption={
+        <>
+          One-shot model outputs with zero manual cue adjustments. Bars show beat drift against the 45 ms gate. On the 128 → 142 BPM stress test, pure RL hit 0.0 ms drift by stretching Track B −10% rather than choosing a tempo-jump cut, an explicit failure mode motivating v5.
+        </>
+      }
+    >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px] border-collapse text-left text-[13.5px]">
+        <table className="w-full min-w-[560px] border-collapse text-left text-[14px] tabular-nums">
           <thead>
-            <tr className="border-b border-white/15 text-[11px] uppercase tracking-[0.12em] text-white/50">
-              <th className="px-4 py-3 font-medium">Transition Pair</th>
-              <th className="px-4 py-3 font-medium">BPM</th>
-              <th className="px-4 py-3 font-medium">Beat Drift</th>
-              <th className="px-4 py-3 font-medium">LUFS Jump</th>
-              <th className="px-4 py-3 font-medium">Outcome</th>
+            <tr className="border-b border-white/20">
+              <th className={TH}>Transition</th>
+              <th className={`${TH} text-right`}>BPM</th>
+              <th className={TH}>Beat drift</th>
+              <th className={`${TH} text-right`}>LUFS jump</th>
+              <th className={`${TH} text-right`}>Outcome</th>
             </tr>
           </thead>
           <tbody>
             {HELD_OUT_PAIRS.map((row) => (
-              <tr key={row.pair} className="border-b border-white/10 text-white/75 last:border-b-0">
-                <td className="px-4 py-2.5">
+              <tr key={row.pair} className="border-b border-white/[0.08]">
+                <td className={TD}>
                   <div className="text-white/90">{row.pair}</div>
-                  <div className="mt-0.5 text-[12px] text-white/45">{row.notes}</div>
+                  <div className={`mt-0.5 text-[12.5px] ${row.fail ? "text-[#ff8a8a]/80" : "text-white/45"}`}>{row.notes}</div>
                 </td>
-                <td className="whitespace-nowrap px-4 py-2.5 text-white/65">{row.bpm}</td>
-                <td className="whitespace-nowrap px-4 py-2.5 text-white/90">{row.drift}</td>
-                <td className="whitespace-nowrap px-4 py-2.5 text-white/90">{row.lufs}</td>
-                <td className="whitespace-nowrap px-4 py-2.5 text-white/80">{row.score}</td>
+                <td className={`${TD} whitespace-nowrap text-right text-white/60`}>{row.bpm}</td>
+                <td className={`${TD} whitespace-nowrap`}>
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-14 text-right text-white/90">{row.drift.toFixed(1)} ms</span>
+                    <span className="relative block h-1.5 w-14 bg-white/10" aria-hidden="true">
+                      <span className="absolute inset-y-0 left-0 bg-white/80" style={{ width: `${Math.max(2, (row.drift / DRIFT_GATE) * 100)}%` }} />
+                    </span>
+                  </div>
+                </td>
+                <td className={`${TD} whitespace-nowrap text-right text-white/90`}>{row.lufs} dB</td>
+                <td className={`${TD} whitespace-nowrap text-right`}>
+                  <span className={row.fail ? "text-[#ff8a8a]" : "text-white"}>{row.score}</span>{" "}
+                  <span className="text-white/40">{row.unit}</span>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <figcaption className="border-t border-white/15 px-4 py-2.5 text-[12px] leading-relaxed text-white/55">
-        One-shot model outputs with zero manual cue adjustments. On the 128 → 142 BPM stress test, pure RL hit 0.0 ms drift by stretching Track B −10% rather than choosing a tempo-jump cut—an explicit failure mode motivating v5.
-      </figcaption>
-    </figure>
+    </Figure>
   )
 }
