@@ -237,7 +237,6 @@
 .jd-range::-moz-range-thumb { width: 10px; height: 10px; background: #fff; border: none; border-radius: 0; }
 .jd-prose { color: rgba(255,255,255,0.78); font-size: 17px; line-height: 1.7; text-align: left; }
 .jd-prose p { margin: 0 0 1.25em; }
-.jd-prose .jd-lede { font-size: 21px; line-height: 1.5; color: #fff; }
 .jd-prose h2 { font-family: var(--font-garnett), system-ui, sans-serif; font-weight: 400; font-size: 26px; color: #fff; margin: 2.4em 0 0.65em; letter-spacing: -0.01em; scroll-margin-top: 5rem; }
 .jd-prose h3 { font-family: var(--font-garnett), system-ui, sans-serif; font-weight: 400; font-size: 19px; color: rgba(255,255,255,0.94); margin: 1.75em 0 0.5em; letter-spacing: -0.01em; }
 .jd-prose strong { color: #fff; font-weight: 600; }

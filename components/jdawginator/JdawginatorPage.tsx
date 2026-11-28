@@ -38,6 +38,16 @@ export default function JdawginatorPage() {
   const [atTop, setAtTop] = useState(true)
   const [playing, setPlaying] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const [mobile, setMobile] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)")
+    const on = () => setMobile(mq.matches)
+    on()
+    mq.addEventListener("change", on)
+    return () => mq.removeEventListener("change", on)
+  }, [])
 
   const onReady = useCallback((c: Club) => {
     club.current = c
@@ -61,22 +71,22 @@ export default function JdawginatorPage() {
   }, [])
 
   useEffect(() => {
-    const el = headerRef.current
-    if (!el) return
+    const el = mobile ? heroRef.current : headerRef.current
+    if (!el || mobile === null) return
     const io = new IntersectionObserver(([e]) => setHeaderVisible(e.intersectionRatio > 0.15), { threshold: [0, 0.15, 0.5] })
     io.observe(el)
     return () => io.disconnect()
-  }, [])
+  }, [mobile, engine])
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <nav className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 md:px-8">
+      <nav className="fixed inset-x-0 top-0 z-40 flex items-center justify-between bg-black/85 px-5 py-4 backdrop-blur-md md:bg-transparent md:px-8 md:backdrop-blur-none">
         <Link href="/" className="font-garnett text-lg text-white/90 transition-colors hover:text-white">Shubhayan Srivastava</Link>
         <Link href="/#writing" className="text-xs uppercase tracking-[0.16em] text-white/60 transition-colors hover:text-white">Writing</Link>
       </nav>
 
-      <header ref={headerRef} className="relative h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#030205]">
-        {engine && <ClubCanvas engine={engine} onReady={onReady} />}
+      <header ref={headerRef} className="relative hidden h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#030205] md:block">
+        {engine && mobile === false && <ClubCanvas engine={engine} onReady={onReady} />}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/70 to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
@@ -140,6 +150,13 @@ export default function JdawginatorPage() {
           </div>
         </div>
       </header>
+
+      <div ref={heroRef} className="px-5 pt-24 md:hidden">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">Writing · Research</div>
+        <h1 className="mt-2 font-garnett text-[clamp(2.25rem,11.5vw,3rem)] font-medium leading-[0.95]">JDAWGINATOR</h1>
+        <p className="mt-3 text-sm leading-relaxed text-white/70">Teaching an audio-native model to DJ with RL and a deterministic CDJ harness.</p>
+        {engine && mobile && <div className="mt-6"><Player engine={engine} title={SET.title} subtitle={SET.subtitle} /></div>}
+      </div>
 
       <div id="read" tabIndex={-1} className="scroll-mt-10 outline-none">
         <Article />

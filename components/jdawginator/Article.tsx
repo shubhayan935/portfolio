@@ -4,6 +4,7 @@ import {
   HeldOutResultsTable,
   StemAutomationDiagram,
 } from "./ArticleFigures"
+import ArticleContents from "./ArticleContents"
 
 export const ARTICLE = {
   date: "27 Nov 2026",
@@ -32,34 +33,16 @@ export default function Article() {
               <div className="mt-1 text-white/80">{ARTICLE.date}</div>
             </div>
             <div>
-              <div className="text-[11px] uppercase tracking-[0.16em] text-white/40">Author</div>
-              <div className="mt-1 text-white/80">Shubhayan Srivastava</div>
-            </div>
-            <div>
               <div className="text-[11px] uppercase tracking-[0.16em] text-white/40">Reading time</div>
               <div className="mt-1 text-white/80">{ARTICLE.readTime}</div>
             </div>
           </div>
 
-          <nav aria-label="Article sections" className="hidden border-t border-white/15 pt-4 md:block">
-            <div className="text-[11px] uppercase tracking-[0.16em] text-white/40">Contents</div>
-            <ul className="mt-2.5 space-y-1.5 text-[12.5px]">
-              {SECTIONS.map((s) => (
-                <li key={s.id}>
-                  <a
-                    href={`#${s.id}`}
-                    className="block text-white/55 transition-colors hover:text-white"
-                  >
-                    {s.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <ArticleContents sections={SECTIONS} />
         </aside>
 
         <article className="jd-prose min-w-0 max-w-[700px] border-t border-white/15 pt-4">
-          <p className="jd-lede">
+          <p>
             In AI right now, raw model intelligence is rarely the bottleneck anymore—the remaining
             gap in almost every domain is plumbing, harnesses, and verifiable feedback loops. I
             recently got into DJing, and it turned out to be the cleanest testbed I could find for
