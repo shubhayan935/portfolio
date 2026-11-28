@@ -9,7 +9,7 @@ import type { AudioEngine, AudioFrame } from "../audio"
 import { buildWorld, LED, STAGE, ROOM } from "./world"
 import { Crowd, type Style } from "./crowd"
 import { buildFixtures, buildLasers, buildMirrorball, type Fixture } from "./lights"
-import { buildHaze, buildCO2, buildConfetti, FinishShader } from "./fx"
+import { buildHaze, buildCO2, buildConfetti, buildBacklight, FinishShader } from "./fx"
 import { textPixels } from "./font"
 import { rand, resetRand } from "./voxels"
 
@@ -94,6 +94,7 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
   const lasers = buildLasers(scene)
   const mirror = buildMirrorball(scene, new THREE.Vector3(0, 33, 2))
   const haze = buildHaze(scene)
+  const backlight = buildBacklight(scene, STAGE.z1 + 0.6, STAGE.h, STAGE.x1 - STAGE.x0 + 24, 22)
   const co2 = buildCO2(scene)
   const confetti = buildConfetti(scene)
 
@@ -469,6 +470,9 @@ export function createClub(canvas: HTMLCanvasElement, engine: AudioEngine, opts:
     const flick = Math.random() < 0.004 ? 0.25 : 1
     world.neonMat.color.setRGB(1.5 * flick, 1.5 * flick, 1.5 * flick)
 
+    const glow = playing ? 0.35 + 0.45 * f.energy + 0.35 * f.pulse + flash : 0.2
+    backlight(tmpC.copy(colA).lerp(colB, 0.3), glow * 0.55)
+    crowd.rim.copy(colA).lerp(colB, 0.35).multiplyScalar(glow * 0.9).addScalar(flash * 0.6)
     haze(dt, avg.clone().add(colA.clone().multiplyScalar(0.3)), playing ? 1 : 0.5, camera.position)
     co2.update(dt, colA)
     confetti.update(dt, time)

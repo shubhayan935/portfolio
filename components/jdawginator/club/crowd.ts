@@ -21,6 +21,7 @@ const P_KNEE = 0, P_JUMP = 1, P_SX = 2, P_TWIST = 3, P_LEAN = 4, P_HP = 5, P_HY 
 const P_LP = 7, P_LR = 8, P_LE = 9, P_RP = 10, P_RR = 11, P_RE = 12, P_PHONE = 13, P_LEG = 14, P_TILT = 15
 const POSE_N = 16
 
+const SILHOUETTE = 0.07
 const SKINS = ["#f1c9a5", "#e0ac83", "#c68a5d", "#a0673f", "#7a4a2b", "#5a3520", "#f5d7bd"]
 const SHIRTS = ["#0d0d0f", "#0d0d0f", "#111114", "#f2f2f2", "#e8e8e8", "#1f2a44", "#3a1a4a", "#7a1424", "#0f3d3a", "#2b2b30", "#c9c9cf", "#ff4f9a", "#3b5bdb", "#4a4f2a", "#6b3a1f"]
 const PANTS = ["#141416", "#1c2433", "#2a3550", "#0e0e10", "#3a3a3f", "#4a3a2a", "#23324d"]
@@ -40,6 +41,8 @@ const NO_MIRROR = new Set<Style>(["phone", "idle", "bartender"])
 export class Crowd {
   dancers: Dancer[] = []
   meshes: Record<string, THREE.InstancedMesh> = {}
+  rim = new THREE.Color(0, 0, 0)
+  private rimU = { value: this.rim }
   headMatrices: THREE.Matrix4[] = []
   handMatrices: THREE.Matrix4[] = []
   private time = 0
@@ -67,6 +70,18 @@ export class Crowd {
     const std = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.82, metalness: 0 })
     const skinMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0 })
     const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false })
+    for (const mat of [std, skinMat]) mat.onBeforeCompile = (sh) => {
+      sh.uniforms.uRim = this.rimU
+      sh.fragmentShader = sh.fragmentShader
+        .replace("#include <common>", "#include <common>\nuniform vec3 uRim;")
+        .replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>
+          vec3 vDir = normalize(vViewPosition);
+          float fres = pow(1.0 - saturate(abs(dot(normal, vDir))), 4.0);
+          float top = saturate(dot(normal, normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz)));
+          float back = saturate(dot(normal, normalize((viewMatrix * vec4(0.0, 0.0, -1.0, 0.0)).xyz)));
+          float far = smoothstep(6.0, 45.0, length(vViewPosition));
+          totalEmissiveRadiance += uRim * far * (fres * (0.3 + 0.7 * back) + top * 0.06);`)
+    }
     const defs: [string, number, THREE.Material][] = [
       ["torso", N, std], ["hips", N, std], ["head", N, skinMat], ["hair", N, std], ["hair2", N, std], ["eyes", 2 * N, std],
       ["upper", 2 * N, std], ["fore", 2 * N, skinMat], ["thigh", 2 * N, std], ["shin", 2 * N, std], ["shoe", 2 * N, std],
@@ -83,6 +98,7 @@ export class Crowd {
     const eyeC = new THREE.Color("#0a0a0a"), glassC = new THREE.Color("#050505")
     this.dancers.forEach((d, i) => {
       const M = this.meshes
+      for (const c of [d.shirt, d.pants, d.skin, d.hair, d.shoe]) c.multiplyScalar(SILHOUETTE)
       M.torso.setColorAt(i, d.shirt)
       M.hips.setColorAt(i, d.pants)
       M.head.setColorAt(i, d.skin)

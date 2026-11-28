@@ -42,6 +42,32 @@ export function buildHaze(scene: THREE.Scene) {
   }
 }
 
+export function buildBacklight(scene: THREE.Scene, z: number, y0: number, w: number, h: number) {
+  const c = document.createElement("canvas")
+  c.width = 256; c.height = 128
+  const g = c.getContext("2d")!
+  const v = g.createLinearGradient(0, 128, 0, 0)
+  v.addColorStop(0, "rgba(255,255,255,1)")
+  v.addColorStop(0.35, "rgba(255,255,255,0.4)")
+  v.addColorStop(1, "rgba(255,255,255,0)")
+  g.fillStyle = v
+  g.fillRect(0, 0, 256, 128)
+  g.globalCompositeOperation = "destination-in"
+  const hz = g.createLinearGradient(0, 0, 256, 0)
+  hz.addColorStop(0, "rgba(0,0,0,0)")
+  hz.addColorStop(0.25, "rgba(0,0,0,1)")
+  hz.addColorStop(0.75, "rgba(0,0,0,1)")
+  hz.addColorStop(1, "rgba(0,0,0,0)")
+  g.fillStyle = hz
+  g.fillRect(0, 0, 256, 128)
+  const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, color: 0x000000 })
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat)
+  m.position.set(0, y0 + h / 2, z)
+  m.renderOrder = 4
+  scene.add(m)
+  return (color: THREE.Color, amount: number) => mat.color.copy(color).multiplyScalar(amount)
+}
+
 export function buildCO2(scene: THREE.Scene) {
   const N = 1400
   const pos = new Float32Array(N * 3), vel = new Float32Array(N * 3), life = new Float32Array(N), size = new Float32Array(N)
