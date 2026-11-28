@@ -247,6 +247,8 @@
 .jd-prose li { margin: 0.45em 0; }
 .jd-prose pre, .jd-prose code { font-family: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace; }
 .jd-prose code { font-size: 0.84em; color: rgba(255,255,255,0.92); }
-.jd-prose .katex { font-size: 1.02em; color: #fff; }
+.jd-prose .katex { font-size: 1em; color: #fff; }
+.jd-prose .katex * { font-family: var(--font-instrument-sans), system-ui, sans-serif !important; }
+.jd-prose .katex .mathnormal { font-style: italic; }
 .jd-prose pre code { font-size: inherit; color: inherit; }
 .jd-prose blockquote { border-left: 2px solid rgba(255,255,255,0.4); padding-left: 1.1em; margin: 1.4em 0; color: rgba(255,255,255,0.88); }
